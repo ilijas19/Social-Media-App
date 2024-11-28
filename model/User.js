@@ -43,7 +43,27 @@ const UserSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    followRequests: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    numFollowing: {
+      type: Number,
+      default: 0,
+    },
+    numFollowers: {
+      type: Number,
+      default: 0,
+    },
     posts: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
+    savedPosts: [
       {
         type: mongoose.Types.ObjectId,
         ref: "Post",
@@ -57,6 +77,7 @@ const UserSchema = new mongoose.Schema(
     ],
     profilePicture: {
       type: String,
+      default: "",
     },
     bio: {
       type: String,
@@ -68,6 +89,7 @@ const UserSchema = new mongoose.Schema(
       enum: ["active", "suspended", "deactivated"],
       default: "active",
     },
+
     notifications: [
       {
         type: mongoose.Types.ObjectId,
