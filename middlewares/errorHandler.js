@@ -11,8 +11,13 @@ const errorHandler = (err, req, res, next) => {
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: `Specified ${duplicate[0]} already exists` });
   }
-  if ((err.name = "CastError")) {
-    return res.send("cast");
+  if (err.name === "ValidationError") {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: `Missing ${Object.keys(err.errors)} value` });
+  }
+  if (err.name === "CastError") {
+    res.status(StatusCodes.OK).json({ msg: `${err.value} is not valid id` });
   }
   res
     .status(StatusCodes.INTERNAL_SERVER_ERROR)
