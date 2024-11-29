@@ -25,6 +25,7 @@ const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
 //APP
 app.use(express.json());
+app.use(express.query());
 app.use(cookieParser(process.env.JWT_SECRET));
 app.use(
   fileUpload({

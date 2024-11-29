@@ -1,0 +1,28 @@
+{
+    "users": [
+        {
+            "_id": "67497ef6a50c9a5e5a49011e",
+            "username": "user1",
+            "email": "user1@gmail.com",
+            "role": "user"
+        },
+        {
+            "_id": "67497efea50c9a5e5a490120",
+            "username": "user2",
+            "email": "user2@gmail.com",
+            "role": "user"
+        },
+        {
+            "_id": "67497f0da50c9a5e5a490122",
+            "username": "user3",
+            "email": "user3@gmail.com",
+            "role": "user"
+        },
+        {
+            "_id": "67497f21a50c9a5e5a490124",
+            "username": "userP",
+            "email": "userP@gmail.com",
+            "role": "user"
+        }
+    ]
+}
