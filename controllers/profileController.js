@@ -6,7 +6,25 @@ const fs = require("fs").promises;
 
 const { checkFile } = require("../utils");
 
-const changeProfilePrivacy = async (req, res) => {};
+const changeProfilePrivacy = async (req, res) => {
+  const { privacy } = req.body;
+  console.log(privacy === "public");
+  if (!privacy) {
+    throw new CustomError.BadRequestError("Privacy value needs to be provided");
+  }
+  if (privacy !== "public" && privacy !== "private") {
+    throw new CustomError.BadRequestError("Invalid privacy value");
+  }
+  const user = await User.findOne({ _id: req.user.userId });
+  if (user.privacy === privacy) {
+    throw new CustomError.BadRequestError(`Your profile is already ${privacy}`);
+  }
+  user.privacy = privacy;
+  await user.save();
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: `Profile privacy switched to: ${privacy}` });
+};
 
 const getOwnProfile = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId }).select(
@@ -21,12 +39,11 @@ const getUserProfile = async (req, res) => {
     throw new CustomError.BadRequestError("Username Must be provided");
   }
   const user = await User.findOne({ username }).select(
-    "username profilePicture followers following posts bio numFollowing numFollowers "
+    "username profilePicture followers following posts bio numFollowing numFollowers privacy "
   );
   if (!user) {
     throw new CustomError.NotFoundError(`No user with ${username} username`);
   }
-  //todo create following funcionality & follow request functionality then continue
   if (user.privacy === "private") {
     if (!user.followers.includes(req.user.userId)) {
       throw new CustomError.UnauthorizedError("Follow User to see his profile");
@@ -79,27 +96,11 @@ const updateBio = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Bio updated", user });
 };
 
-//todo after implemennting following functionality
-const getFollowers = async (req, res) => {
-  res.send("seeFollowers");
-};
-
-const getFollowing = async (req, res) => {
-  res.send("seeFollowing");
-};
-
-const getFollowRequests = async (req, res) => {
-  res.send("seeFollowRequests");
-};
-
 module.exports = {
   changeProfilePrivacy,
   getOwnProfile,
   getUserProfile,
   deleteProfile,
   updateProfilePicture,
-  getFollowers,
-  getFollowing,
   updateBio,
-  getFollowRequests,
 };
