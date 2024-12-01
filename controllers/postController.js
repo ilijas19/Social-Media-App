@@ -1,5 +1,6 @@
 const Post = require("../model/Post");
 const User = require("../model/User");
+const Comment = require("../model/Comment");
 const CustomError = require("../errors");
 const { StatusCodes } = require("http-status-codes");
 const cloudinary = require("cloudinary").v2;
@@ -37,6 +38,8 @@ const createPost = async (req, res) => {
       type,
       imgUrl: secure_url,
     });
+    user.posts.push(post._id);
+    await user.save();
     return res.status(StatusCodes.CREATED).json({ post });
   }
   if (type === "status") {
@@ -49,6 +52,8 @@ const createPost = async (req, res) => {
       text,
       type,
     });
+    user.posts.push(post._id);
+    await user.save();
     return res.status(StatusCodes.CREATED).json({ post });
   }
 };
@@ -94,26 +99,50 @@ const editPost = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Post updated", post });
 };
 
-//todo: delete associated likes and comments from database on deleting post
 const deletePost = async (req, res) => {
   const { id: postId } = req.params;
   if (!postId) {
     throw new CustomError.BadRequestError("Post id needs to be provided");
   }
-  const post = await Post.findOne({ _id: postId });
+  const post = await Post.findOne({
+    _id: postId,
+    publisherId: req.user.userId,
+  });
   if (!post) {
-    throw new CustomError.NotFoundError(`No post with id ${postId}`);
+    throw new CustomError.NotFoundError(
+      `No post with id ${postId} found in your posts`
+    );
   }
+
   await post.deleteOne();
   res.status(StatusCodes.OK).json({ msg: "Post deleted" });
 };
 
 //
 const getFollowingUsersPosts = async (req, res) => {
-  res.send("getFollowingUsersPosts");
+  const user = await User.findOne({ _id: req.user.userId });
+
+  // Fetch posts for all followed users in a single query
+  const posts = await Post.find({
+    publisherId: { $in: user.following },
+  });
+
+  res.status(StatusCodes.OK).json({ posts });
 };
+
 //
-const getExploreSectionPosts = async (req, res) => {};
+const getExploreSectionPosts = async (req, res) => {
+  const posts = await Post.find({}).populate({
+    path: "publisherId",
+    select: "privacy",
+  });
+
+  const publicPosts = posts.filter(
+    (post) => post.publisherId.privacy !== "private"
+  );
+
+  res.status(StatusCodes.OK).json({ publicPosts });
+};
 //
 const getPostComments = async (req, res) => {
   res.send("getPostComments");

@@ -1,4 +1,5 @@
 const User = require("../model/User");
+const Post = require("../model/Post");
 const CustomError = require("../errors");
 const { StatusCodes } = require("http-status-codes");
 const cloudinary = require("cloudinary").v2;
@@ -58,12 +59,16 @@ const deleteProfile = async (req, res) => {
     throw new CustomError.BadRequestError("Password Must Be Provided");
   }
   const user = await User.findOne({ _id: req.user.userId });
+
+  if (!user) throw new CustomError.NotFoundError("User not found");
+
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
     throw new CustomError.BadRequestError("Wrong Password");
   }
   //todo delete associated posts & posts comments too
-  await user.deleteOne({});
+  await user.deleteOne();
+  res.status(StatusCodes.OK).json({ msg: "profile deleted" });
 };
 
 const updateProfilePicture = async (req, res) => {

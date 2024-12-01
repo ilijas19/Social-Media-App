@@ -19,6 +19,7 @@ const authRouter = require("./routes/authRoutes");
 const postRouter = require("./routes/postRoutes");
 const userRouter = require("./routes/userRoutes");
 const profileRouter = require("./routes/profileRoutes");
+const commentRouter = require("./routes/commentRoutes");
 
 //MIDDLEWARES
 const notFound = require("./middlewares/notFound");
@@ -42,9 +43,10 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/post", postRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/profile", profileRouter);
+app.use("/api/v1/comment", commentRouter);
 
 app.use(notFound);
-app.use(errorHandler);
+// app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 const start = async () => {
