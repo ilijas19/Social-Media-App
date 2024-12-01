@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Comment = require("./Comment");
 
 const PostSchema = new mongoose.Schema(
   {
@@ -48,5 +49,34 @@ const PostSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+PostSchema.methods.calculateLikes = function () {
+  this.numberOfLikes = this.likes.length;
+};
+
+PostSchema.pre("save", function () {
+  if (this.isModified("likes")) {
+    this.calculateLikes();
+  }
+});
+
+PostSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function () {
+    await Comment.deleteMany({ postId: this._id });
+  }
+);
+
+PostSchema.pre("deleteMany", { query: true }, async function () {
+  const filter = this.getFilter(); // Get the filter for the posts being deleted
+  const Post = mongoose.model("Post"); // Dynamically load the Post model here
+  const postIds = await Post.find(filter).distinct("_id");
+
+  // Delete comments for the posts being deleted
+  await Comment.deleteMany({
+    postId: { $in: postIds },
+  });
+});
 
 module.exports = mongoose.model("Post", PostSchema);

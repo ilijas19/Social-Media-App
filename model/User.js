@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
+const Post = require("./Post");
 
 const UserSchema = new mongoose.Schema(
   {
@@ -119,13 +120,31 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+UserSchema.methods.calculateNumbers = function () {
+  this.numFollowers = this.followers.length;
+  this.numFollowing = this.following.length;
+};
+
 UserSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
 UserSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
-  this.password = await bcrypt.hash(this.password, 10);
+  if (this.isModified("followers") || this.isModified("following")) {
+    this.calculateNumbers();
+  }
+
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 });
+
+UserSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function () {
+    await Post.deleteMany({ publisherId: this._id });
+  }
+);
 
 module.exports = mongoose.model("User", UserSchema);
