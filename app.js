@@ -20,6 +20,7 @@ const postRouter = require("./routes/postRoutes");
 const userRouter = require("./routes/userRoutes");
 const profileRouter = require("./routes/profileRoutes");
 const commentRouter = require("./routes/commentRoutes");
+const chatRouter = require("./routes/chatRoutes");
 
 //MIDDLEWARES
 const notFound = require("./middlewares/notFound");
@@ -44,9 +45,10 @@ app.use("/api/v1/post", postRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/profile", profileRouter);
 app.use("/api/v1/comment", commentRouter);
+app.use("/api/v1/chat", chatRouter);
 
 app.use(notFound);
-// app.use(errorHandler);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 const start = async () => {
