@@ -17,6 +17,10 @@ body {
 .hidden {
   display: none;
 }
+.selected-nav {
+  background-color: #c4c4c425;
+}
+
 .container {
   max-width: 950px;
   width: 100%;
@@ -214,44 +218,62 @@ body {
   width: 100%;
   display: grid;
   grid-template-columns: 5rem 1fr;
-  grid-template-rows: 5rem 1fr 3rem;
+  grid-template-rows: 4rem auto 1fr 3rem;
   align-items: center;
   padding-right: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid #4e4e4e;
 }
 .publisher-profile-photo {
-  height: 3.3rem;
-  width: 3.3rem;
+  height: 3.7rem;
+  width: 3.7rem;
   border-radius: 50%;
   grid-template-columns: 1;
   grid-row: 1;
   margin-left: 1rem;
+  margin-top: 1rem;
+  background-color: #4e4e4e;
 }
 .publisher-name {
+  display: flex;
+  align-items: center;
   grid-column: 2;
   grid-row: 1;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   color: #ddd;
+  gap: 0.3rem;
   margin-left: 1rem;
 }
 .publisher-name span {
   color: #4e4e4e;
   font-size: 1.4rem;
 }
+.publisher-name i {
+  margin-left: auto;
+  cursor: pointer;
+}
 .img-div {
+  grid-row: 3;
+  grid-column: 2;
+}
+.post-text {
   grid-row: 2;
   grid-column: 2;
+  padding: 1rem;
+  padding-top: 0;
+  color: #929292;
+  font-size: 1.5rem;
 }
 .post-img {
   width: 100%;
   height: 35rem;
-  background-color: #4e4e4e;
+  object-fit: cover;
   border-radius: 16px;
+  background-color: #4e4e4e;
 }
 .post-interaction {
   grid-column: 2;
-  grid-row: 3;
+  grid-row: 4;
   width: 100%;
   height: 100%;
   display: flex;
@@ -267,14 +289,12 @@ body {
   padding: 0.3rem;
   border-radius: 9px;
   transition: all 0.4s;
-  cursor: pointer;
 }
-.interaction-div:hover {
-  background-color: #c4c4c425;
-}
+
 .number {
   font-size: 1.3rem;
   color: #b4b4b4;
+  cursor: default;
 }
 .icon {
   font-size: 1.8rem;
@@ -284,6 +304,7 @@ body {
 .save-icon {
   margin-left: auto;
 }
+
 /* SELECTED POST SECTION */
 .selected-post-section {
   grid-column: 2;
@@ -296,6 +317,7 @@ body {
   justify-content: center;
   padding: 1rem;
   border-bottom: 1px solid #4e4e4e;
+  border-left: 1px solid #4e4e4e;
   position: sticky;
   top: 0;
   z-index: 999;
@@ -378,7 +400,7 @@ body {
   font-size: 1.8rem;
   color: #f6f6f6;
   margin-left: auto;
-  margin-right: 1rem;
+
   cursor: pointer;
 }
 /* SEARCH SECTION */
