@@ -10,28 +10,38 @@
     <section class="login-section">
       <h1 class="form-heading">Register</h1>
 
-      <form class="login-form form">
+      <form class="login-form form" id="register-form">
         <label for="login-username-input"> Username </label>
         <input
           class="input login-username-input"
+          id="register-username"
           type="text"
           placeholder="Enter Username..."
         />
         <label for="login-email-input"> Email </label>
         <input
           class="input login-email-input"
+          id="register-email"
           type="text"
           placeholder="Enter Email..."
         />
         <label for="login-password-input"> Password </label>
         <input
           class="input login-password-input"
+          id="register-password"
           type="password"
           placeholder="Enter Password..."
         />
         <button type="submit" class="submit-btn">Register</button>
-        <a class="underlink" href="../pages/login.html">Login</a>
+        <a class="underlink" href="/login">Login</a>
       </form>
     </section>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"
+      integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script type="module" src="../src/controller.js"></script>
   </body>
 </html>
