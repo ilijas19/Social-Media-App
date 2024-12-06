@@ -26,10 +26,11 @@ const authenticateUser = async (req, res, next) => {
       req.user = decoded;
       return next();
     } else {
+      return res.redirect("/login");
       throw new CustomError.UnauthenticatedError("Authentication Failed");
     }
   }
-
+  return res.redirect("/login");
   throw new CustomError.UnauthenticatedError("Authentication Failed");
 };
 
