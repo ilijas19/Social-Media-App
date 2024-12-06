@@ -21,6 +21,7 @@ const userRouter = require("./routes/userRoutes");
 const profileRouter = require("./routes/profileRoutes");
 const commentRouter = require("./routes/commentRoutes");
 const chatRouter = require("./routes/chatRoutes");
+const navigationRouter = require("./routes/navigationRoutes");
 
 //MIDDLEWARES
 const notFound = require("./middlewares/notFound");
@@ -40,6 +41,7 @@ cloudinary.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 
+app.use("/", navigationRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/post", postRouter);
 app.use("/api/v1/user", userRouter);
