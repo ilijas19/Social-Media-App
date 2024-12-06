@@ -34,6 +34,7 @@ const createPost = async (req, res) => {
     const post = await Post.create({
       publisherId: user._id,
       publisherUsername: user.username,
+      postPrivacy: user.privacy,
       text,
       type,
       imgUrl: secure_url,
@@ -132,16 +133,20 @@ const getFollowingUsersPosts = async (req, res) => {
 
 //
 const getExploreSectionPosts = async (req, res) => {
-  const posts = await Post.find({}).populate({
-    path: "publisherId",
-    select: "privacy",
-  });
+  const { page = 1 } = req.query;
 
-  const publicPosts = posts.filter(
-    (post) => post.publisherId.privacy !== "private"
-  );
+  const limit = 10;
+  const skip = (Number(page) - 1) * limit;
 
-  res.status(StatusCodes.OK).json({ publicPosts });
+  const posts = await Post.find({ postPrivacy: "public" })
+    .populate({
+      path: "publisherId",
+      select: "profilePicture",
+    })
+    .skip(skip)
+    .limit(limit);
+
+  res.status(StatusCodes.OK).json({ posts });
 };
 //
 const getPostComments = async (req, res) => {
