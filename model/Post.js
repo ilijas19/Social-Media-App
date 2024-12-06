@@ -17,6 +17,10 @@ const PostSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    postPrivacy: {
+      type: String,
+      required: [true, "Please provide post privacy"],
+    },
     text: {
       type: String,
       required: function () {
