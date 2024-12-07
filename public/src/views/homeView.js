@@ -2,8 +2,82 @@ class homeView {
   _fileInput = document.getElementById("file-input");
   _fileNameEl = document.getElementById("file-name");
   _postsContainer = document.querySelector(".post-container");
+  _exploreBtn = document.getElementById("explore-btn");
+  _followingBtn = document.getElementById("following-btn");
+  _menuItems = document.querySelectorAll(".menu-item");
 
-  renderPosts(posts) {
+  constructor() {
+    this.addPageMenuListeners();
+  }
+  //-- SWITCHING PAGES --\\
+  addPageMenuListeners() {
+    this._menuItems.forEach((el) => {
+      el.addEventListener("click", (e) => {
+        const menuItem = e.target
+          .closest(".menu-item")
+          .querySelector(".menu-item-text").textContent;
+        window.location = `/${menuItem.toLowerCase()}`;
+      });
+    });
+  }
+
+  //---SWITCHING SECTIONS---\\
+  addSectionNavigationListeners(explorePostHandler, followingPostHandler) {
+    this._exploreBtn.addEventListener("click", () => {
+      this._toggleSelectedNavClass(this._exploreBtn);
+      this.loadPage(explorePostHandler);
+    });
+    this._followingBtn.addEventListener("click", () => {
+      this._toggleSelectedNavClass(this._followingBtn);
+      this.loadPage(followingPostHandler);
+    });
+  }
+
+  //---LOADING PAGE---\\
+  async loadPage(handler) {
+    try {
+      const posts = await handler();
+      this._renderPosts(posts);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //--ADDING POST INTERACTION LISTENERS--\\
+  addPostInteractionListeners() {
+    this._postsContainer?.addEventListener("click", (e) => {
+      const target = e.target;
+
+      if (target.classList.contains("like-icon")) {
+        this._handleLike(target.dataset.id);
+      }
+
+      if (target.classList.contains("comment-icon")) {
+        this._handleComment(target.dataset.id);
+      }
+
+      if (target.classList.contains("save-icon")) {
+        this._handleComment(target.dataset.id);
+      }
+    });
+  }
+
+  //-File input listener-\\
+  addFileInputListener() {
+    this._fileInput.addEventListener("change", (e) => {
+      // console.log(e.target);
+      // console.log(e.target.files);
+      const fileName = e.target.files[0]
+        ? e.target.files[0].name
+        : "No File Selected";
+      this._fileNameEl.textContent = fileName;
+    });
+  }
+
+  //PRIVATE FUNCTIONS
+
+  //--rendering posts
+  _renderPosts(posts) {
     this._postsContainer.innerHTML = "";
     posts.forEach((post) => {
       const postEl = `
@@ -47,37 +121,6 @@ class homeView {
     });
   }
 
-  addPostInteractionListeners() {
-    this._postsContainer.addEventListener("click", (e) => {
-      const target = e.target;
-
-      if (target.classList.contains("like-icon")) {
-        this._handleLike(target.dataset.id);
-      }
-
-      if (target.classList.contains("comment-icon")) {
-        this._handleComment(target.dataset.id);
-      }
-
-      if (target.classList.contains("save-icon")) {
-        this._handleComment(target.dataset.id);
-      }
-    });
-  }
-
-  addFileInputListener() {
-    this._fileInput.addEventListener("change", (e) => {
-      console.log(e.target);
-      console.log(e.target.files);
-      const fileName = e.target.files[0]
-        ? e.target.files[0].name
-        : "No File Selected";
-      this._fileNameEl.textContent = fileName;
-    });
-  }
-
-  //PROTECTED FUNCTIONS
-
   _handleLike(postId) {
     console.log(`Handle like postId:${postId}`);
   }
@@ -88,6 +131,7 @@ class homeView {
     console.log(`Handle save postId:${postId}`);
   }
 
+  //---HELPRERS--\\
   _formatDate(date) {
     const options = {
       year: "numeric",
@@ -98,6 +142,13 @@ class homeView {
     };
 
     return new Date(date).toLocaleString("en-US", options);
+  }
+
+  _toggleSelectedNavClass(el) {
+    document
+      .querySelectorAll(".navigation li")
+      .forEach((el) => el.classList.remove("selected-nav"));
+    el.classList.add("selected-nav");
   }
 }
 

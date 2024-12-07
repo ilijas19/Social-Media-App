@@ -17,15 +17,99 @@ body {
 .hidden {
   display: none !important;
 }
+
 .container {
-  max-width: 700px;
+  max-width: 950px;
   width: 100%;
   margin: 0 auto;
   min-height: 100vh;
-  border: 1px solid #4e4e4e;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+}
+.menu-section {
+  border-left: 1px solid #4e4e4e;
+  position: fixed;
+  height: 100vh;
+}
+
+/* MENU */
+.menu {
   display: flex;
   flex-direction: column;
+  list-style-type: none;
+  padding: 1rem 2rem;
+  gap: 1rem;
+  height: 100%;
 }
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  width: fit-content;
+  padding: 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+.menu-item:hover {
+  background-color: #c4c4c425;
+}
+.menu-icon {
+  color: #f6f6f6;
+  font-size: 2.4rem;
+}
+
+.menu-item-text {
+  font-size: 1.8rem;
+  color: #ddd;
+}
+
+.menu-post-btn {
+  background-color: #1da1f2;
+  border: none;
+  color: #f6f6f6;
+  font-size: 1.6rem;
+  font-weight: bold;
+  padding: 1rem 0rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+
+.menu-post-btn:hover {
+  background-color: #1a88cc;
+}
+.menu-profile-div {
+  padding: 0.5rem;
+  border-radius: 12px;
+  transition: all 0.4s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.menu-profile-div:hover {
+  background-color: #c4c4c425;
+}
+.menu-profile-img {
+  height: 3.3rem;
+  width: 3.3rem;
+  border-radius: 50%;
+}
+.menu-profile-username {
+  font-size: 1.6rem;
+  color: #ddd;
+}
+/* chat section */
+.chat-section {
+  border: 1px solid #4e4e4e;
+  grid-column: 2;
+}
+.chat-img {
+  height: 4rem;
+}
+
+/*  */
 .post-sticky-heading {
   border-bottom: 1px solid #4e4e4e;
   display: flex;

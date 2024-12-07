@@ -11,7 +11,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="../styles/messageStyles.css" />
+    <link rel="stylesheet" href="../styles/homeStyles.css" />
   </head>
   <body>
     <div class="container">
@@ -52,47 +52,58 @@
           <button class="menu-post-btn">Post</button>
         </ul>
       </aside>
-      <div class="chat-section">
-        <div class="post-sticky-heading">
-          <i class="fa-solid fa-arrow-left page-back-icon"></i>
-          <p class="chat-title">Ilijas19 or Messages</p>
+
+      <section class="notification-section">
+        <div class="sticky-top">
+          <div class="selected-post-header">
+            <i class="fa-solid fa-arrow-left page-back-icon"></i>
+            <p>Notifications</p>
+          </div>
+          <nav class="notification-nav">
+            <div class="nav-item selected">All</div>
+            <div class="nav-item">Requests</div>
+            <div class="nav-item">Likes & Comments</div>
+          </nav>
         </div>
-        <ul class="chats-continer">
-          <li class="chat">
+        <ul class="notification-container">
+          <li class="notification">
             <img
               src="../img/blank-profile-picture-973460_1280.webp"
               alt=""
-              class="chat-img"
+              class="notification-img"
             />
-            <div class="chat-info">
-              <p class="chat-name">Ilijas</p>
-              <p class="new-msg">NEW MESSAGE</p>
+            <p class="notification-text">Ilijas Liked Your Post</p>
+            <i class="fa-regular fa-heart notification-icon"></i>
+            <i class="fa-solid fa-xmark close-icon"></i>
+          </li>
+          <li class="notification">
+            <img
+              src="../img/blank-profile-picture-973460_1280.webp"
+              alt=""
+              class="notification-img"
+            />
+            <p class="notification-text">Ilijas Commented Your Post</p>
+            <i class="fa-regular fa-comment notification-icon"></i>
+            <i class="fa-solid fa-xmark close-icon"></i>
+          </li>
+          <li class="notification request-notification">
+            <img
+              src="../img/blank-profile-picture-973460_1280.webp"
+              alt=""
+              class="notification-img"
+            />
+            <div class="request-notification-div">
+              <p class="notification-text">Ilijas Requested To Follow You</p>
+              <div class="request-buttons">
+                <button class="notification-btn accept-btn">Accept</button>
+                <button class="notification-btn decline-btn">Decline</button>
+              </div>
             </div>
-            <i class="fa-solid fa-ellipsis chat-icon"></i>
+            <i class="fa-solid fa-user-group notification-icon"></i>
+            <i class="fa-solid fa-xmark close-icon"></i>
           </li>
         </ul>
-
-        <ul class="private-chat hidden">
-          <li class="message message-left">
-            <p class="message-from">Ilijas19</p>
-            <p class="message-text">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus
-              mollitia, nostrum maiores labore architecto nulla nesciunt
-              laboriosam facilis, minima illo natus, rerum quasi magnam
-              veritatis inventore! Tempora corporis corrupti fugiat?
-            </p>
-          </li>
-          <li class="message message-right">
-            <p class="message-from">Ilijas19</p>
-            <p class="message-text">Lorem ipsum dolor s</p>
-          </li>
-        </ul>
-
-        <form class="msg-form hidden">
-          <input type="text" placeholder="Enter Message..." class="msg-input" />
-          <button class="send-msg-btn">Send</button>
-        </form>
-      </div>
+      </section>
     </div>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"

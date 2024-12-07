@@ -11,7 +11,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="../styles/messageStyles.css" />
+    <link rel="stylesheet" href="../styles/homeStyles.css" />
   </head>
   <body>
     <div class="container">
@@ -52,47 +52,31 @@
           <button class="menu-post-btn">Post</button>
         </ul>
       </aside>
-      <div class="chat-section">
-        <div class="post-sticky-heading">
+
+      <section class="search-section">
+        <div class="selected-post-header">
           <i class="fa-solid fa-arrow-left page-back-icon"></i>
-          <p class="chat-title">Ilijas19 or Messages</p>
+          <p>Search</p>
         </div>
-        <ul class="chats-continer">
-          <li class="chat">
+        <form class="search-form">
+          <input
+            type="text"
+            placeholder="Search For Profile"
+            class="search-input"
+          />
+          <button class="post-btn">Search</button>
+        </form>
+        <ul class="results-container">
+          <li class="result">
             <img
               src="../img/blank-profile-picture-973460_1280.webp"
               alt=""
-              class="chat-img"
+              class="menu-profile-img"
             />
-            <div class="chat-info">
-              <p class="chat-name">Ilijas</p>
-              <p class="new-msg">NEW MESSAGE</p>
-            </div>
-            <i class="fa-solid fa-ellipsis chat-icon"></i>
+            <p class="result-info">Ilijas19</p>
           </li>
         </ul>
-
-        <ul class="private-chat hidden">
-          <li class="message message-left">
-            <p class="message-from">Ilijas19</p>
-            <p class="message-text">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus
-              mollitia, nostrum maiores labore architecto nulla nesciunt
-              laboriosam facilis, minima illo natus, rerum quasi magnam
-              veritatis inventore! Tempora corporis corrupti fugiat?
-            </p>
-          </li>
-          <li class="message message-right">
-            <p class="message-from">Ilijas19</p>
-            <p class="message-text">Lorem ipsum dolor s</p>
-          </li>
-        </ul>
-
-        <form class="msg-form hidden">
-          <input type="text" placeholder="Enter Message..." class="msg-input" />
-          <button class="send-msg-btn">Send</button>
-        </form>
-      </div>
+      </section>
     </div>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"

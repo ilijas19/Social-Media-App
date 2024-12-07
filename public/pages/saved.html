@@ -11,7 +11,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="../styles/messageStyles.css" />
+    <link rel="stylesheet" href="../styles/homeStyles.css" />
   </head>
   <body>
     <div class="container">
@@ -52,47 +52,46 @@
           <button class="menu-post-btn">Post</button>
         </ul>
       </aside>
-      <div class="chat-section">
-        <div class="post-sticky-heading">
+
+      <section class="bookmark-section">
+        <div class="selected-post-header">
           <i class="fa-solid fa-arrow-left page-back-icon"></i>
-          <p class="chat-title">Ilijas19 or Messages</p>
+          <p>Saved</p>
         </div>
-        <ul class="chats-continer">
-          <li class="chat">
+        <ul class="post-container">
+          <li class="post">
             <img
               src="../img/blank-profile-picture-973460_1280.webp"
+              class="publisher-profile-photo"
               alt=""
-              class="chat-img"
             />
-            <div class="chat-info">
-              <p class="chat-name">Ilijas</p>
-              <p class="new-msg">NEW MESSAGE</p>
-            </div>
-            <i class="fa-solid fa-ellipsis chat-icon"></i>
-          </li>
-        </ul>
-
-        <ul class="private-chat hidden">
-          <li class="message message-left">
-            <p class="message-from">Ilijas19</p>
-            <p class="message-text">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus
-              mollitia, nostrum maiores labore architecto nulla nesciunt
-              laboriosam facilis, minima illo natus, rerum quasi magnam
-              veritatis inventore! Tempora corporis corrupti fugiat?
+            <p class="publisher-name">
+              Ilijas 19 &middot; <span>14:09PM</span
+              ><i class="fa-solid fa-ellipsis"></i>
             </p>
-          </li>
-          <li class="message message-right">
-            <p class="message-from">Ilijas19</p>
-            <p class="message-text">Lorem ipsum dolor s</p>
+            <p class="post-text">
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Facilis
+              dolores dolorem illo unde perferendis laudantium minus nostrum quo
+              provident minima ab, perspiciatis quae facere voluptatem ipsa
+              totam labore iure corporis?
+            </p>
+            <div class="img-div">
+              <img src="" alt="" class="post-img" />
+            </div>
+            <div class="post-interaction">
+              <div class="interaction-div">
+                <i class="fa-regular fa-heart icon like-icon"></i>
+                <p class="like-number number">123</p>
+              </div>
+              <div class="interaction-div">
+                <i class="fa-regular fa-comment icon comment-icon"></i>
+                <p class="comment-number number">123</p>
+              </div>
+              <i class="fa-regular fa-bookmark icon save-icon"></i>
+            </div>
           </li>
         </ul>
-
-        <form class="msg-form hidden">
-          <input type="text" placeholder="Enter Message..." class="msg-input" />
-          <button class="send-msg-btn">Send</button>
-        </form>
-      </div>
+      </section>
     </div>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"

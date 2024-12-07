@@ -54,10 +54,10 @@
       </aside>
 
       <section class="main-section">
-        <nav class="navigation">
-          <a class="selected-nav" href="#">Explore</a>
-          <a href="#">Following</a>
-        </nav>
+        <ul class="navigation">
+          <li class="selected-nav" id="explore-btn">Explore</li>
+          <li id="following-btn">Following</li>
+        </ul>
         <div class="post-tab">
           <form class="form">
             <input
@@ -256,46 +256,6 @@
             </div>
             <i class="fa-solid fa-user-group notification-icon"></i>
             <i class="fa-solid fa-xmark close-icon"></i>
-          </li>
-        </ul>
-      </section>
-
-      <section class="bookmark-section hidden">
-        <div class="selected-post-header">
-          <i class="fa-solid fa-arrow-left page-back-icon"></i>
-          <p>Saved</p>
-        </div>
-        <ul class="post-container">
-          <li class="post">
-            <img
-              src="../img/blank-profile-picture-973460_1280.webp"
-              class="publisher-profile-photo"
-              alt=""
-            />
-            <p class="publisher-name">
-              Ilijas 19 &middot; <span>14:09PM</span
-              ><i class="fa-solid fa-ellipsis"></i>
-            </p>
-            <p class="post-text">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Facilis
-              dolores dolorem illo unde perferendis laudantium minus nostrum quo
-              provident minima ab, perspiciatis quae facere voluptatem ipsa
-              totam labore iure corporis?
-            </p>
-            <div class="img-div">
-              <img src="" alt="" class="post-img" />
-            </div>
-            <div class="post-interaction">
-              <div class="interaction-div">
-                <i class="fa-regular fa-heart icon like-icon"></i>
-                <p class="like-number number">123</p>
-              </div>
-              <div class="interaction-div">
-                <i class="fa-regular fa-comment icon comment-icon"></i>
-                <p class="comment-number number">123</p>
-              </div>
-              <i class="fa-regular fa-bookmark icon save-icon"></i>
-            </div>
           </li>
         </ul>
       </section>

@@ -48,3 +48,13 @@ export const getExploreSectionPosts = async (page = 1) => {
     console.error(error);
   }
 };
+
+export const getFollowingSectionPosts = async (page = 1) => {
+  try {
+    const result = await axios.get(`/api/v1/post/following?page=${page}`);
+
+    return result.data.posts;
+  } catch (error) {
+    console.error(error);
+  }
+};

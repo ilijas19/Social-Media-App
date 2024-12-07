@@ -14,16 +14,20 @@ const authController = () => {
 };
 const homeController = async () => {
   if (window.location.pathname === "/home") {
-    //SETTING CURRENT USER
+    //---FIRST LOAD---\\
     const currentUser = await model.getCurrentUser();
     model.state.currentUser = currentUser;
-
-    //SHOWING EXPLORE SECTION POSTS ON OPENING PAGE
-    const explorePosts = await model.getExploreSectionPosts();
-    console.log(explorePosts);
-    homeView.renderPosts(explorePosts);
+    homeView.loadPage(model.getExploreSectionPosts);
     homeView.addPostInteractionListeners();
     homeView.addFileInputListener();
+
+    //-- SWITCHING PAGES --\\
+
+    //--- SWITCHING SECTIONS ---\\
+    homeView.addSectionNavigationListeners(
+      model.getExploreSectionPosts,
+      model.getFollowingSectionPosts
+    );
   }
 };
 

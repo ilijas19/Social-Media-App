@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>profile</title>
+    <title>Home</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
@@ -15,55 +15,103 @@
   </head>
   <body>
     <div class="container">
-      <section class="profile-tab-section">
-        <div class="post-sticky-heading">
-          <i class="fa-solid fa-arrow-left page-back-icon"></i>
-          <p>Profile</p>
-        </div>
-        <div class="profile-background-picture"></div>
-        <div class="profile-info">
-          <img
-            src="../img/blank-profile-picture-973460_1280.webp"
-            alt=""
-            class="profile-img"
-          />
-          <div class="profile-stats">
-            <h3 class="profile-name">Ilijas</h3>
-            <p class="following"><span>21</span> following</p>
-            <p class="followers"><span>22</span> followers</p>
+      <aside class="menu-section">
+        <ul class="menu">
+          <div class="menu-profile-div">
+            <img
+              src="../img/blank-profile-picture-973460_1280.webp"
+              alt=""
+              class="menu-profile-img"
+            />
+            <p class="menu-profile-username">Ilijas19</p>
           </div>
-          <ul class="profile-nav">
-            <li class="profile-nav-item selected-nav-item">Posts</li>
-            <li class="profile-nav-item">Saved</li>
-            <li class="profile-nav-item">Likes</li>
-          </ul>
-          <button class="edit-profile-btn">Edit profile</button>
-        </div>
+          <li class="menu-item">
+            <i class="fa-solid fa-house menu-icon"></i>
+            <p class="menu-item-text">Home</p>
+          </li>
+          <li class="menu-item">
+            <i class="fa-solid fa-magnifying-glass menu-icon"></i>
+            <p class="menu-item-text">Search</p>
+          </li>
+          <li class="menu-item">
+            <i class="fa-regular fa-bell menu-icon"></i>
+            <p class="menu-item-text">Notifications</p>
+          </li>
+          <li class="menu-item">
+            <i class="fa-regular fa-envelope menu-icon"></i>
+            <p class="menu-item-text">Messages</p>
+          </li>
+          <li class="menu-item">
+            <i class="fa-regular fa-bookmark menu-icon"></i>
+            <p class="menu-item-text">Saved</p>
+          </li>
+          <li class="menu-item">
+            <i class="fa-regular fa-user menu-icon"></i>
+            <p class="menu-item-text">Profile</p>
+          </li>
+          <button class="menu-post-btn">Post</button>
+        </ul>
+      </aside>
+      <section class="profile-section">
+        <section class="profile-tab-section">
+          <div class="post-sticky-heading">
+            <i class="fa-solid fa-arrow-left page-back-icon"></i>
+            <p>Profile</p>
+          </div>
+          <div class="profile-background-picture"></div>
+          <div class="profile-info">
+            <img
+              src="../img/blank-profile-picture-973460_1280.webp"
+              alt=""
+              class="profile-img"
+            />
+            <div class="profile-stats">
+              <h3 class="profile-name">Ilijas</h3>
+              <p class="following"><span>21</span> following</p>
+              <p class="followers"><span>22</span> followers</p>
+            </div>
+            <ul class="profile-nav">
+              <li class="profile-nav-item selected-nav-item">Posts</li>
+              <li class="profile-nav-item">Saved</li>
+              <li class="profile-nav-item">Likes</li>
+            </ul>
+            <button class="edit-profile-btn">Edit profile</button>
+          </div>
+        </section>
+        <ul class="post-container">
+          <li class="post">
+            <img
+              src="../img/blank-profile-picture-973460_1280.webp"
+              class="publisher-profile-photo"
+              alt=""
+            />
+            <p class="publisher-name">
+              Ilijas 19 &middot; <span>14:09PM</span>
+            </p>
+            <div class="img-div">
+              <img src="" alt="" class="post-img" />
+            </div>
+            <div class="post-interaction">
+              <div class="interaction-div">
+                <i class="fa-regular fa-heart icon like-icon"></i>
+                <p class="like-number number">123</p>
+              </div>
+              <div class="interaction-div">
+                <i class="fa-regular fa-comment icon comment-icon"></i>
+                <p class="comment-number number">123</p>
+              </div>
+              <i class="fa-regular fa-bookmark icon save-icon"></i>
+            </div>
+          </li>
+        </ul>
       </section>
-      <ul class="post-container">
-        <li class="post">
-          <img
-            src="../img/blank-profile-picture-973460_1280.webp"
-            class="publisher-profile-photo"
-            alt=""
-          />
-          <p class="publisher-name">Ilijas 19 &middot; <span>14:09PM</span></p>
-          <div class="img-div">
-            <img src="" alt="" class="post-img" />
-          </div>
-          <div class="post-interaction">
-            <div class="interaction-div">
-              <i class="fa-regular fa-heart icon like-icon"></i>
-              <p class="like-number number">123</p>
-            </div>
-            <div class="interaction-div">
-              <i class="fa-regular fa-comment icon comment-icon"></i>
-              <p class="comment-number number">123</p>
-            </div>
-            <i class="fa-regular fa-bookmark icon save-icon"></i>
-          </div>
-        </li>
-      </ul>
     </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"
+      integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script type="module" src="../src/controller.js"></script>
   </body>
 </html>
