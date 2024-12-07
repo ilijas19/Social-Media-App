@@ -28,4 +28,15 @@ router.get("/profile", authenticateUser, (req, res) => {
 router.get("/messages", authenticateUser, (req, res) => {
   res.sendFile(path.join(__dirname, "../public/pages/messages.html"));
 });
+
+router.get("/saved", authenticateUser, (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/pages/saved.html"));
+});
+router.get("/notifications", authenticateUser, (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/pages/notifications.html"));
+});
+
+router.get("/search", authenticateUser, (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/pages/search.html"));
+});
 module.exports = router;
