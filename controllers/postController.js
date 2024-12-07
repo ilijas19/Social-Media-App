@@ -121,12 +121,22 @@ const deletePost = async (req, res) => {
 
 //
 const getFollowingUsersPosts = async (req, res) => {
+  const { page = 1 } = req.query;
+  const limit = 10;
+  const skip = (page - 1) * limit;
+
   const user = await User.findOne({ _id: req.user.userId });
 
   // Fetch posts for all followed users in a single query
   const posts = await Post.find({
     publisherId: { $in: user.following },
-  });
+  })
+    .populate({
+      path: "publisherId",
+      select: "profilePicture",
+    })
+    .limit(limit)
+    .skip(skip);
 
   res.status(StatusCodes.OK).json({ posts });
 };
