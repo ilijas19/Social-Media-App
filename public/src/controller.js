@@ -15,6 +15,12 @@ const authController = () => {
 };
 
 const menuController = async () => {
+  if (
+    window.location.pathname === "/login" ||
+    window.location.pathname === "/register"
+  ) {
+    return;
+  }
   const currentUser = await model.getCurrentUser();
   model.state.currentUser = currentUser;
   menuView._usernameEl.textContent = model.state.currentUser.username;
@@ -25,13 +31,13 @@ const homeController = async () => {
   if (window.location.pathname === "/home") {
     //---FIRST LOAD---\\
     homeView.loadPage(model.getExploreSectionPosts);
-    homeView.addPostInteractionListeners(model.state.currentUser);
-    homeView.addFileInputListener();
+    homeView.addPostInteractionListeners(model);
 
     //--- SWITCHING SECTIONS ---\\
     homeView.addSectionNavigationListeners(
       model.getExploreSectionPosts,
-      model.getFollowingSectionPosts
+      model.getFollowingSectionPosts,
+      model.state
     );
   }
 };

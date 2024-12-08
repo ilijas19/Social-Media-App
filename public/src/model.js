@@ -1,6 +1,7 @@
 export const state = {
   currentUser: {},
-  page: "",
+  explorePage: 1,
+  followingPage: 1,
 };
 
 export const loginUser = async (email, password) => {
@@ -39,9 +40,26 @@ export const getCurrentUser = async () => {
   }
 };
 
-export const getExploreSectionPosts = async (page = 1) => {
+export const getExploreSectionPosts = async () => {
   try {
-    const result = await axios.get(`/api/v1/post/explore?page=${page}`);
+    const result = await axios.get(
+      `/api/v1/post/explore?page=${state.explorePage}`
+    );
+    state.followingPage = 1;
+    state.explorePage += 1;
+    return result.data.posts;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getFollowingSectionPosts = async () => {
+  try {
+    const result = await axios.get(
+      `/api/v1/post/following?page=${state.followingPage}`
+    );
+    state.explorePage = 1;
+    state.followingPage += 1;
 
     return result.data.posts;
   } catch (error) {
@@ -49,12 +67,11 @@ export const getExploreSectionPosts = async (page = 1) => {
   }
 };
 
-export const getFollowingSectionPosts = async (page = 1) => {
+export const saveUnsavePost = async (postId) => {
   try {
-    const result = await axios.get(`/api/v1/post/following?page=${page}`);
-
-    return result.data.posts;
+    const result = await axios.get(`/api/v1/post/${postId}/save`);
+    console.log(result.data.msg);
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 };

@@ -8,63 +8,44 @@ class homeView {
   constructor() {}
 
   //---SWITCHING SECTIONS---\\
-  addSectionNavigationListeners(explorePostHandler, followingPostHandler) {
+  addSectionNavigationListeners(
+    explorePostHandler,
+    followingPostHandler,
+    state
+  ) {
+    //loading different sections based on button that is clicked
     this._exploreBtn.addEventListener("click", () => {
+      //setting page to 1 on each section button click
+      state.explorePage = 1;
       this._toggleSelectedNavClass(this._exploreBtn);
       this.loadPage(explorePostHandler);
     });
     this._followingBtn.addEventListener("click", () => {
+      //setting page to 1 on each section button click
+      state.followingPage = 1;
       this._toggleSelectedNavClass(this._followingBtn);
       this.loadPage(followingPostHandler);
     });
   }
 
-  //---LOADING PAGE---\\
+  //---LOADING PAGE---\\ - based of handler that is being passed
   async loadPage(handler) {
     try {
+      this._clearContainer();
+      window.scrollTo({ top: 0, behavior: "smooth" });
       const posts = await handler();
-      this._renderPosts(posts);
+      //passing handler to render posts
+      this._renderPosts(posts, handler);
+      this._addFileInputListener();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
-  //--ADDING POST INTERACTION LISTENERS--\\
-  addPostInteractionListeners(currentUser) {
-    this._postsContainer?.addEventListener("click", (e) => {
-      const target = e.target;
-
-      if (target.classList.contains("like-icon")) {
-        this._handleLike(target.dataset.id);
-      }
-
-      if (target.classList.contains("comment-icon")) {
-        this._handleComment(target.dataset.id);
-      }
-
-      if (target.classList.contains("save-icon")) {
-        this._handleComment(target.dataset.id);
-      }
-    });
-  }
-
-  //-File input listener-\\
-  addFileInputListener() {
-    this._fileInput.addEventListener("change", (e) => {
-      // console.log(e.target);
-      // console.log(e.target.files);
-      const fileName = e.target.files[0]
-        ? e.target.files[0].name
-        : "No File Selected";
-      this._fileNameEl.textContent = fileName;
-    });
-  }
-
-  //PRIVATE FUNCTIONS
-
-  //--rendering posts
-  _renderPosts(posts) {
-    this._postsContainer.innerHTML = "";
+  //--RENDERING POSTS--\\
+  _renderPosts(posts, handler) {
+    //handler passed from load page()
+    //rendering fetched posts
     posts.forEach((post) => {
       const postEl = `
       <li class="post" value=${post._id}>
@@ -105,19 +86,72 @@ class homeView {
       `;
       this._postsContainer.insertAdjacentHTML("beforeend", postEl);
     });
+    //if less then 10 post then there is no new page so no need for show more button
+    if (posts.length < 10) return;
+    this._postsContainer.insertAdjacentHTML(
+      "beforeend",
+      "<button class='show-more-btn'>Show More</button>"
+    );
+
+    this._addShowMoreButtonListeners(handler);
   }
 
+  //--SHOW MORE BUTTON--\\
+  _addShowMoreButtonListeners(handler) {
+    const showMoreBtn = this._postsContainer.querySelector(".show-more-btn");
+    //--on clicking show more button
+    showMoreBtn?.addEventListener("click", async () => {
+      try {
+        //getting new page posts
+        const posts = await handler();
+        //removing old show more btn
+        showMoreBtn.remove();
+        //appending new posts and button
+        this._renderPosts(posts, handler);
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  }
+
+  //--ADDING POST INTERACTION LISTENERS--\\
+
+  addPostInteractionListeners(model) {
+    this._postsContainer?.addEventListener("click", async (e) => {
+      const target = e.target;
+
+      if (target.classList.contains("like-icon")) {
+        this._handleLike(target.dataset.id);
+      }
+
+      if (target.classList.contains("comment-icon")) {
+        this._handleComment(target.dataset.id);
+      }
+
+      if (target.classList.contains("save-icon")) {
+        await this._handleSave(target.dataset.id, model.saveUnsavePost, target);
+      }
+    });
+  }
+
+  //--POST INTERACTIONS--\\
   _handleLike(postId) {
     console.log(`Handle like postId:${postId}`);
   }
   _handleComment(postId) {
     console.log(`Handle comment postId:${postId}`);
   }
-  _handleSave(postId) {
-    console.log(`Handle save postId:${postId}`);
+  async _handleSave(postId, saveHandler, target) {
+    this._toggleSaveBookmark(target);
+    await saveHandler(postId);
+  }
+  //---------------------------------------------\\
+
+  //---HELPRERS---\\
+  _clearContainer() {
+    this._postsContainer.innerHTML = "";
   }
 
-  //---HELPRERS--\\
   _formatDate(date) {
     const options = {
       year: "numeric",
@@ -135,6 +169,29 @@ class homeView {
       .querySelectorAll(".navigation li")
       .forEach((el) => el.classList.remove("selected-nav"));
     el.classList.add("selected-nav");
+  }
+
+  _addFileInputListener() {
+    this._fileInput.addEventListener("change", (e) => {
+      // console.log(e.target);
+      // console.log(e.target.files);
+      const fileName = e.target.files[0]
+        ? e.target.files[0].name
+        : "No File Selected";
+      this._fileNameEl.textContent = fileName;
+    });
+  }
+  _toggleSaveBookmark(target) {
+    if (target.classList.contains("fa-regular")) {
+      target.classList.remove("fa-regular");
+      target.classList.add("fa-solid");
+      return;
+    }
+    if (target.classList.contains("fa-solid")) {
+      target.classList.remove("fa-solid");
+      target.classList.add("fa-regular");
+      return;
+    }
   }
 }
 
