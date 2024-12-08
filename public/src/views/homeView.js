@@ -4,22 +4,8 @@ class homeView {
   _postsContainer = document.querySelector(".post-container");
   _exploreBtn = document.getElementById("explore-btn");
   _followingBtn = document.getElementById("following-btn");
-  _menuItems = document.querySelectorAll(".menu-item");
 
-  constructor() {
-    this.addPageMenuListeners();
-  }
-  //-- SWITCHING PAGES --\\
-  addPageMenuListeners() {
-    this._menuItems.forEach((el) => {
-      el.addEventListener("click", (e) => {
-        const menuItem = e.target
-          .closest(".menu-item")
-          .querySelector(".menu-item-text").textContent;
-        window.location = `/${menuItem.toLowerCase()}`;
-      });
-    });
-  }
+  constructor() {}
 
   //---SWITCHING SECTIONS---\\
   addSectionNavigationListeners(explorePostHandler, followingPostHandler) {
@@ -44,7 +30,7 @@ class homeView {
   }
 
   //--ADDING POST INTERACTION LISTENERS--\\
-  addPostInteractionListeners() {
+  addPostInteractionListeners(currentUser) {
     this._postsContainer?.addEventListener("click", (e) => {
       const target = e.target;
 
