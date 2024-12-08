@@ -153,6 +153,7 @@ const getExploreSectionPosts = async (req, res) => {
       path: "publisherId",
       select: "profilePicture",
     })
+    .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
 
