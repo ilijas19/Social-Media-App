@@ -545,3 +545,21 @@ body {
 .decline-btn {
   background-color: #880808;
 }
+
+.show-more-btn {
+  margin-top: 2rem;
+  align-self: center;
+  background-color: transparent;
+  color: #f6f6f6;
+  border: 1px solid #f6f6f6;
+  padding: 0.8rem;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.4s;
+  font-weight: bold;
+}
+.show-more-btn:hover {
+  background-color: #f6f6f6;
+  color: rgb(21, 32, 43);
+}
