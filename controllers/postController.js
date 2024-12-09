@@ -188,7 +188,9 @@ const savePost = async (req, res) => {
   }
   const user = await User.findOne({ _id: req.user.userId });
   if (user.savedPosts.includes(postId)) {
-    user.savedPosts = user.savedPosts.filter((post) => post === postId);
+    user.savedPosts = user.savedPosts.filter(
+      (post) => post._id.toString() !== postId.toString()
+    );
     await user.save();
     return res.status(StatusCodes.OK).json({ msg: "post unsaved" });
   } else {
@@ -199,12 +201,29 @@ const savePost = async (req, res) => {
 };
 
 const getSavedPosts = async (req, res) => {
-  const user = await User.findOne({ _id: req.user.userId }).populate({
-    path: "savedPosts",
-    select: "publisherUsername imgUrl",
+  const { page = 1 } = req.query;
+  const limit = 10;
+  const skip = (page - 1) * limit;
+
+  const user = await User.findOne({ _id: req.user.userId })
+    .populate({
+      path: "savedPosts",
+      // select: "publisherUsername imgUrl",
+      populate: {
+        path: "publisherId",
+        select: "profilePicture",
+      },
+    })
+    .skip(skip)
+    .limit(limit);
+
+  const postsWithUserData = user.savedPosts.map((post) => {
+    const isSaved = true;
+    const isLiked = post.likes.includes(user._id);
+    return { ...post.toJSON(), isSaved, isLiked };
   });
 
-  res.status(StatusCodes.OK).json({ saved: user.savedPosts });
+  res.status(StatusCodes.OK).json({ postsWithUserData });
 };
 
 const likeUnlikePost = async (req, res) => {

@@ -85,3 +85,12 @@ export const likeUnlikePost = async (postId) => {
     window.location.reload();
   }
 };
+
+export const getSavedPosts = async () => {
+  try {
+    const result = await axios.get("/api/v1/post/savedPosts");
+    return result.data.postsWithUserData;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};

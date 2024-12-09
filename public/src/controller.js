@@ -3,6 +3,7 @@ import loginView from "./views/loginView.js";
 import registerView from "./views/registerView.js";
 import menuView from "./views/menuView.js";
 import homeView from "./views/homeView.js";
+import savedView from "./views/savedView.js";
 
 const authController = () => {
   if (
@@ -21,6 +22,7 @@ const menuController = async () => {
   ) {
     return;
   }
+  console.log("called");
   const currentUser = await model.getCurrentUser();
   model.state.currentUser = currentUser;
   menuView._usernameEl.textContent = model.state.currentUser.username;
@@ -42,10 +44,18 @@ const homeController = async () => {
   }
 };
 
-const init = () => {
+const savedPageController = async () => {
+  if (window.location.pathname === "/saved") {
+    savedView.loadPage(model.getSavedPosts);
+    homeView.addPostInteractionListeners(model);
+  }
+};
+
+const init = async () => {
   authController();
-  menuController();
+  await menuController();
   homeController();
+  savedPageController();
 };
 
 init();
