@@ -138,12 +138,19 @@ const getFollowingUsersPosts = async (req, res) => {
     .limit(limit)
     .skip(skip);
 
-  res.status(StatusCodes.OK).json({ posts });
+  const postsWithUserData = posts.map((post) => {
+    const isSaved = user.savedPosts.includes(post._id);
+    const isLiked = post.likes.includes(req.user.userId);
+    return { ...post.toObject(), isSaved, isLiked };
+  });
+
+  res.status(StatusCodes.OK).json({ postsWithUserData });
 };
 
 //
 const getExploreSectionPosts = async (req, res) => {
   const { page = 1 } = req.query;
+  const user = await User.findOne({ _id: req.user.userId });
 
   const limit = 10;
   const skip = (Number(page) - 1) * limit;
@@ -157,7 +164,13 @@ const getExploreSectionPosts = async (req, res) => {
     .skip(skip)
     .limit(limit);
 
-  res.status(StatusCodes.OK).json({ posts });
+  const postsWithUserData = posts.map((post) => {
+    const isSaved = user.savedPosts.includes(post._id);
+    const isLiked = post.likes.includes(req.user.userId);
+    return { ...post.toObject(), isSaved, isLiked };
+  });
+
+  res.status(StatusCodes.OK).json({ postsWithUserData });
 };
 //
 const getPostComments = async (req, res) => {

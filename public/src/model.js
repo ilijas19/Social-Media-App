@@ -10,7 +10,7 @@ export const loginUser = async (email, password) => {
     alert(result.data.msg);
     window.location = "/home";
   } catch (error) {
-    console.error(error);
+    alert(error.response.data.msg);
   }
 };
 
@@ -27,7 +27,7 @@ export const registerUser = async (username, email, password) => {
       window.location = "/login";
     }
   } catch (error) {
-    console.error(error);
+    alert(error.response.data.msg);
   }
 };
 
@@ -36,7 +36,7 @@ export const getCurrentUser = async () => {
     const result = await axios.get("/api/v1/auth/showMe");
     return result.data.currentUser;
   } catch (error) {
-    console.error(error);
+    alert(error.response.data.msg);
   }
 };
 
@@ -47,9 +47,9 @@ export const getExploreSectionPosts = async () => {
     );
     state.followingPage = 1;
     state.explorePage += 1;
-    return result.data.posts;
+    return result.data.postsWithUserData;
   } catch (error) {
-    console.error(error);
+    alert(error.response.data.msg);
   }
 };
 
@@ -61,17 +61,27 @@ export const getFollowingSectionPosts = async () => {
     state.explorePage = 1;
     state.followingPage += 1;
 
-    return result.data.posts;
+    return result.data.postsWithUserData;
   } catch (error) {
-    console.error(error);
+    alert(error.response.data.msg);
   }
 };
 
 export const saveUnsavePost = async (postId) => {
   try {
     const result = await axios.get(`/api/v1/post/${postId}/save`);
+  } catch (error) {
+    alert(error.response.data.msg);
+    window.location.reload();
+  }
+};
+
+export const likeUnlikePost = async (postId) => {
+  try {
+    const result = await axios.get(`/api/v1/post/${postId}/like-unlike`);
     console.log(result.data.msg);
   } catch (error) {
-    console.log(error);
+    alert(error.response.data.msg);
+    window.location.reload();
   }
 };

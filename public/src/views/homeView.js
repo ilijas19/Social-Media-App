@@ -67,9 +67,9 @@ class homeView {
             </div>
             <div class="post-interaction">
               <div class="interaction-div like-div" >
-                <i class="fa-regular fa-heart icon like-icon" data-id=${
-                  post._id
-                }></i>
+                <i class="${
+                  post.isLiked ? "fa-solid cRed" : "fa-regular cDdd"
+                } fa-heart icon like-icon" data-id=${post._id}></i>
                 <p class="like-number number">${post.numberOfLikes}</p>
               </div>
               <div class="interaction-div comment-div" >
@@ -78,9 +78,9 @@ class homeView {
                 }></i>
                 <p class="comment-number number">${post.comments.length}</p>
               </div>
-              <i class="fa-regular fa-bookmark icon save-icon" data-id=${
-                post._id
-              }></i>
+              <i class="${
+                post.isSaved ? "fa-solid" : "fa-regular"
+              } fa-bookmark icon save-icon" data-id=${post._id}></i>
             </div>
           </li>
       `;
@@ -121,7 +121,7 @@ class homeView {
       const target = e.target;
 
       if (target.classList.contains("like-icon")) {
-        this._handleLike(target.dataset.id);
+        this._handleLike(target.dataset.id, model.likeUnlikePost, target);
       }
 
       if (target.classList.contains("comment-icon")) {
@@ -135,8 +135,9 @@ class homeView {
   }
 
   //--POST INTERACTIONS--\\
-  _handleLike(postId) {
-    console.log(`Handle like postId:${postId}`);
+  async _handleLike(postId, likeHandler, target) {
+    this._toggleLike(target);
+    await likeHandler(postId);
   }
   _handleComment(postId) {
     console.log(`Handle comment postId:${postId}`);
@@ -190,6 +191,25 @@ class homeView {
     if (target.classList.contains("fa-solid")) {
       target.classList.remove("fa-solid");
       target.classList.add("fa-regular");
+      return;
+    }
+  }
+  _toggleLike(target) {
+    const likeCountEl = target.nextElementSibling; // Select the like number element
+
+    if (target.classList.contains("fa-regular")) {
+      target.classList.remove("fa-regular");
+      target.classList.add("fa-solid");
+      target.style.color = "#780606";
+      likeCountEl.textContent = Number(likeCountEl.textContent) + 1;
+      return;
+    }
+
+    if (target.classList.contains("fa-solid")) {
+      target.classList.remove("fa-solid");
+      target.classList.add("fa-regular");
+      target.style.color = "#ddd";
+      likeCountEl.textContent = Number(likeCountEl.textContent) - 1;
       return;
     }
   }
