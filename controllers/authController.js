@@ -147,7 +147,10 @@ const logoutUser = async (req, res) => {
 };
 
 const getCurrentUser = async (req, res) => {
-  res.status(StatusCodes.OK).json({ currentUser: req.user });
+  const user = await User.findOne({ _id: req.user.userId }).select(
+    "_id username email bio privacy numFollowers numFollowing profilePicture"
+  );
+  res.status(StatusCodes.OK).json({ currentUser: user });
 };
 
 module.exports = {

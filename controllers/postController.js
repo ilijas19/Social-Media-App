@@ -59,16 +59,6 @@ const createPost = async (req, res) => {
   }
 };
 
-const getOwnPosts = async (req, res) => {
-  const queryObject = { publisherId: req.user.userId };
-  const { type } = req.query;
-  if (type) {
-    queryObject.type = type;
-  }
-  const posts = await Post.find(queryObject);
-  res.status(StatusCodes.OK).json({ posts });
-};
-
 const getSinglePost = async (req, res) => {
   const { id: postId } = req.params;
   if (!postId) {
@@ -172,6 +162,58 @@ const getExploreSectionPosts = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ postsWithUserData });
 };
+
+const getOwnPosts = async (req, res) => {
+  const { page = 1 } = req.query;
+  const limit = 10;
+  const skip = (page - 1) * limit;
+
+  const user = await User.findOne({ _id: req.user.userId });
+  const posts = await Post.find({ publisherId: req.user.userId })
+    .populate({
+      path: "publisherId",
+      select: "profilePicture",
+    })
+    .sort({ createdAt: -1 });
+
+  const paginatedPosts = posts.slice(skip, limit + skip);
+
+  const postsWithUserData = paginatedPosts.map((post) => {
+    const isSaved = user.savedPosts.includes(post._id);
+    const isLiked = post.likes.includes(user._id);
+    return { ...post.toJSON(), isSaved, isLiked };
+  });
+  res
+    .status(StatusCodes.OK)
+    .json({ nbHits: postsWithUserData.length, page, postsWithUserData });
+};
+
+const getLikedPosts = async (req, res) => {
+  const { page = 1 } = req.query;
+  const limit = 10;
+  const skip = (page - 1) * limit;
+
+  const user = await User.findOne({ _id: req.user.userId }).populate({
+    path: "likedPosts",
+    populate: {
+      path: "publisherId",
+      select: "profilePicture",
+    },
+  });
+  const paginatedPosts = user.likedPosts
+    .slice(skip, skip + limit)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const postsWithUserData = paginatedPosts.map((post) => {
+    const isLiked = true;
+    const isSaved = user.savedPosts.includes(post._id);
+    return { ...post.toJSON(), isLiked, isSaved };
+  });
+
+  res
+    .status(StatusCodes.OK)
+    .json({ nbHits: paginatedPosts.length, page, postsWithUserData });
+};
 //
 const getPostComments = async (req, res) => {
   res.send("getPostComments");
@@ -203,27 +245,28 @@ const savePost = async (req, res) => {
 const getSavedPosts = async (req, res) => {
   const { page = 1 } = req.query;
   const limit = 10;
-  const skip = (page - 1) * limit;
+  const skip = (Number(page) - 1) * limit;
 
-  const user = await User.findOne({ _id: req.user.userId })
-    .populate({
-      path: "savedPosts",
-      // select: "publisherUsername imgUrl",
-      populate: {
-        path: "publisherId",
-        select: "profilePicture",
-      },
-    })
-    .skip(skip)
-    .limit(limit);
+  const user = await User.findOne({ _id: req.user.userId }).populate({
+    path: "savedPosts",
+    // select: "publisherUsername imgUrl",
+    populate: {
+      path: "publisherId",
+      select: "profilePicture",
+    },
+  });
 
-  const postsWithUserData = user.savedPosts.map((post) => {
+  const paginatedPosts = user.savedPosts.slice(skip, skip + limit);
+
+  const postsWithUserData = paginatedPosts.map((post) => {
     const isSaved = true;
     const isLiked = post.likes.includes(user._id);
     return { ...post.toJSON(), isSaved, isLiked };
   });
 
-  res.status(StatusCodes.OK).json({ postsWithUserData });
+  res
+    .status(StatusCodes.OK)
+    .json({ nbHits: postsWithUserData.length, page, postsWithUserData });
 };
 
 const likeUnlikePost = async (req, res) => {
@@ -235,13 +278,25 @@ const likeUnlikePost = async (req, res) => {
   if (!post) {
     throw new CustomError.NotFoundError(`No post found with id: ${postId}`);
   }
+  const user = await User.findOne({ _id: req.user.userId });
+
   if (post.likes.includes(req.user.userId)) {
-    post.likes = post.likes.filter((like) => like === req.user.userId);
+    //Remove Like
+    post.likes = post.likes.filter(
+      (like) => like.toString() !== req.user.userId.toString()
+    );
+    user.likedPosts = user.likedPosts.filter(
+      (postt) => postt._id.toString() !== postId.toString()
+    );
     await post.save();
+    await user.save();
     res.status(StatusCodes.OK).json({ msg: "like removed" });
   } else {
+    //Like
     post.likes.push(req.user.userId);
+    user.likedPosts.push(postId);
     await post.save();
+    await user.save();
     res.status(StatusCodes.OK).json({ msg: "post liked" });
   }
 };
@@ -268,6 +323,7 @@ module.exports = {
   editPost,
   deletePost,
   getOwnPosts,
+  getLikedPosts,
   getFollowingUsersPosts,
   getExploreSectionPosts,
   getSinglePost,
