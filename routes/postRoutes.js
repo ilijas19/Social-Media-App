@@ -11,6 +11,7 @@ const {
   editPost, // patch '/'
   deletePost, // delete '/'
   getOwnPosts, //get '/'
+  getLikedPosts, // get 'likedPosts',
   getFollowingUsersPosts, //get '/following'
   getExploreSectionPosts, //get '/explore'
   getSinglePost, // get /:id
@@ -29,6 +30,7 @@ router
 router.get("/following", authenticateUser, getFollowingUsersPosts);
 router.get("/explore", authenticateUser, getExploreSectionPosts);
 router.get("/savedPosts", authenticateUser, getSavedPosts);
+router.get("/likedPosts", authenticateUser, getLikedPosts);
 
 router
   .route("/:id")
