@@ -11,6 +11,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <link rel="stylesheet" href="../styles/selectedPostStyles.css" />
     <link rel="stylesheet" href="../styles/homeStyles.css" />
   </head>
   <body>
@@ -53,7 +54,7 @@
         </ul>
       </aside>
 
-      <section class="main-section">
+      <section class="main-section main">
         <ul class="navigation">
           <li class="selected-nav" id="explore-btn">Explore</li>
           <li id="following-btn">Following</li>
@@ -121,31 +122,45 @@
           <i class="fa-solid fa-arrow-left page-back-icon"></i>
           <p>Post</p>
         </div>
-        <div class="post">
+
+        <div class="post" value="${post._id}">
           <img
-            src="../img/blank-profile-picture-973460_1280.webp"
+            src="${post.publisherId.profilePicture}"
             class="publisher-profile-photo"
             alt=""
           />
-          <p class="publisher-name">Ilijas 19</p>
+          <p class="publisher-name">
+            Ilijas &middot;
+            <span>2:45pm</span><i class="fa-solid fa-ellipsis"></i>
+          </p>
+          <p class="post-text">
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis
+            nihil, commodi deleniti molestias qui quisquam facere nesciunt fugit
+            sint illum, eius eligendi fugiat quos, illo aut distinctio dicta!
+            Quaerat, fugit?
+          </p>
           <div class="img-div">
             <img src="" alt="" class="post-img" />
           </div>
-          <div class="selected-post-info">
-            <p class="post-date">3:52 AM · Dec 4, 2024</p>
-          </div>
-          <div class="post-interaction selected-post-interaction">
-            <div class="interaction-div">
-              <i class="fa-regular fa-heart icon like-icon"></i>
-              <p class="like-number number">123</p>
+          <div class="post-interaction">
+            <div class="interaction-div like-div">
+              <i
+                class="fa-solid fa-heart icon like-icon"
+                data-id="${post._id}"
+              ></i>
+              <p class="like-number number">2</p>
             </div>
-            <div class="interaction-div">
+            <div class="interaction-div comment-div">
               <i class="fa-regular fa-comment icon comment-icon"></i>
-              <p class="comment-number number">123</p>
+              <p class="comment-number number">2</p>
             </div>
-            <i class="fa-regular fa-bookmark icon save-icon"></i>
+            <i
+              class="fa-regular fa-bookmark icon save-icon"
+              data-id="${post._id}"
+            ></i>
           </div>
         </div>
+
         <form class="selected-post-form">
           <img
             src="../img/blank-profile-picture-973460_1280.webp"
@@ -178,84 +193,6 @@
               impedit sit autem! Impedit harum quasi optio doloribus consequatur
               est in error voluptatem.
             </p>
-          </li>
-          <!--  -->
-        </ul>
-      </section>
-
-      <section class="search-section hidden">
-        <div class="selected-post-header">
-          <i class="fa-solid fa-arrow-left page-back-icon"></i>
-          <p>Search</p>
-        </div>
-        <form class="search-form">
-          <input
-            type="text"
-            placeholder="Search For Profile"
-            class="search-input"
-          />
-          <button class="post-btn">Search</button>
-        </form>
-        <ul class="results-container">
-          <li class="result">
-            <img
-              src="../img/blank-profile-picture-973460_1280.webp"
-              alt=""
-              class="menu-profile-img"
-            />
-            <p class="result-info">Ilijas19</p>
-          </li>
-        </ul>
-      </section>
-
-      <section class="notification-section hidden">
-        <div class="sticky-top">
-          <div class="selected-post-header">
-            <i class="fa-solid fa-arrow-left page-back-icon"></i>
-            <p>Notifications</p>
-          </div>
-          <nav class="notification-nav">
-            <div class="nav-item selected">All</div>
-            <div class="nav-item">Requests</div>
-            <div class="nav-item">Likes & Comments</div>
-          </nav>
-        </div>
-        <ul class="notification-container">
-          <li class="notification">
-            <img
-              src="../img/blank-profile-picture-973460_1280.webp"
-              alt=""
-              class="notification-img"
-            />
-            <p class="notification-text">Ilijas Liked Your Post</p>
-            <i class="fa-regular fa-heart notification-icon"></i>
-            <i class="fa-solid fa-xmark close-icon"></i>
-          </li>
-          <li class="notification">
-            <img
-              src="../img/blank-profile-picture-973460_1280.webp"
-              alt=""
-              class="notification-img"
-            />
-            <p class="notification-text">Ilijas Commented Your Post</p>
-            <i class="fa-regular fa-comment notification-icon"></i>
-            <i class="fa-solid fa-xmark close-icon"></i>
-          </li>
-          <li class="notification request-notification">
-            <img
-              src="../img/blank-profile-picture-973460_1280.webp"
-              alt=""
-              class="notification-img"
-            />
-            <div class="request-notification-div">
-              <p class="notification-text">Ilijas Requested To Follow You</p>
-              <div class="request-buttons">
-                <button class="notification-btn accept-btn">Accept</button>
-                <button class="notification-btn decline-btn">Decline</button>
-              </div>
-            </div>
-            <i class="fa-solid fa-user-group notification-icon"></i>
-            <i class="fa-solid fa-xmark close-icon"></i>
           </li>
         </ul>
       </section>

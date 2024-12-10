@@ -11,6 +11,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <link rel="stylesheet" href="../styles/selectedPostStyles.css" />
     <link rel="stylesheet" href="../styles/homeStyles.css" />
   </head>
   <body>
@@ -53,7 +54,7 @@
         </ul>
       </aside>
 
-      <section class="bookmark-section">
+      <section class="bookmark-section main">
         <div class="selected-post-header">
           <i class="fa-solid fa-arrow-left page-back-icon"></i>
           <p>Saved</p>
@@ -89,6 +90,86 @@
               </div>
               <i class="fa-regular fa-bookmark icon save-icon"></i>
             </div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="selected-post-section hidden">
+        <div class="selected-post-header">
+          <i class="fa-solid fa-arrow-left page-back-icon"></i>
+          <p>Post</p>
+        </div>
+
+        <div class="post" value="${post._id}">
+          <img
+            src="${post.publisherId.profilePicture}"
+            class="publisher-profile-photo"
+            alt=""
+          />
+          <p class="publisher-name">
+            Ilijas &middot;
+            <span>2:45pm</span><i class="fa-solid fa-ellipsis"></i>
+          </p>
+          <p class="post-text">
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis
+            nihil, commodi deleniti molestias qui quisquam facere nesciunt fugit
+            sint illum, eius eligendi fugiat quos, illo aut distinctio dicta!
+            Quaerat, fugit?
+          </p>
+          <div class="img-div">
+            <img src="" alt="" class="post-img" />
+          </div>
+          <div class="post-interaction">
+            <div class="interaction-div like-div">
+              <i
+                class="fa-solid fa-heart icon like-icon"
+                data-id="${post._id}"
+              ></i>
+              <p class="like-number number">2</p>
+            </div>
+            <div class="interaction-div comment-div">
+              <i class="fa-regular fa-comment icon comment-icon"></i>
+              <p class="comment-number number">2</p>
+            </div>
+            <i
+              class="fa-regular fa-bookmark icon save-icon"
+              data-id="${post._id}"
+            ></i>
+          </div>
+        </div>
+
+        <form class="selected-post-form">
+          <img
+            src="../img/blank-profile-picture-973460_1280.webp"
+            alt=""
+            class="menu-profile-img"
+          />
+          <input
+            type="text"
+            placeholder="Post your comment"
+            class="comment-input"
+          />
+          <button class="post-btn">Comment</button>
+        </form>
+        <ul class="comment-container">
+          <li class="comment">
+            <img
+              src="../img/blank-profile-picture-973460_1280.webp"
+              alt=""
+              class="menu-profile-img"
+            />
+            <div class="comment-info-div">
+              <p class="comment-info">
+                Ilijas19 <span>3:52 AM · Dec 4, 2024</span>
+              </p>
+              <i class="fa-solid fa-ellipsis comment-icon"></i>
+            </div>
+            <p class="comment-text">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Exercitationem est fuga eligendi officia quos qui placeat, dolore
+              impedit sit autem! Impedit harum quasi optio doloribus consequatur
+              est in error voluptatem.
+            </p>
           </li>
         </ul>
       </section>

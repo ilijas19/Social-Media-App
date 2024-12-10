@@ -1,5 +1,7 @@
 export default class View {
   _pageBackIcon = document.querySelector(".page-back-icon");
+  _selectedPostSection = document.querySelector(".selected-post-section");
+  _mainSection = document.querySelector(".main");
 
   //---LOADING PAGE---\\ - based of handler that is being passed
   async loadPage(handler) {
@@ -98,6 +100,8 @@ export default class View {
 
       if (target.classList.contains("comment-icon")) {
         this._handleComment(target.dataset.id);
+        this._mainSection.classList.add("hidden");
+        this._selectedPostSection.classList.remove("hidden");
       }
 
       if (target.classList.contains("save-icon")) {
