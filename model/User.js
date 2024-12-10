@@ -70,6 +70,13 @@ const UserSchema = new mongoose.Schema(
         ref: "Post",
       },
     ],
+    likedPosts: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
+
     chats: [
       {
         type: mongoose.Types.ObjectId,
