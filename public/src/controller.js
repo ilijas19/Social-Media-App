@@ -4,6 +4,7 @@ import registerView from "./views/registerView.js";
 import menuView from "./views/menuView.js";
 import homeView from "./views/homeView.js";
 import savedView from "./views/savedView.js";
+import profileView from "./views/profileView.js";
 
 const authController = () => {
   if (
@@ -22,11 +23,11 @@ const menuController = async () => {
   ) {
     return;
   }
-  console.log("called");
   const currentUser = await model.getCurrentUser();
   model.state.currentUser = currentUser;
   menuView._usernameEl.textContent = model.state.currentUser.username;
   menuView.addPageMenuListeners();
+  homeView.addPageBackListener();
 };
 
 const homeController = async () => {
@@ -46,8 +47,23 @@ const homeController = async () => {
 
 const savedPageController = async () => {
   if (window.location.pathname === "/saved") {
+    model.state.savedPage = 1;
     savedView.loadPage(model.getSavedPosts);
-    homeView.addPostInteractionListeners(model);
+    savedView.addPostInteractionListeners(model);
+  }
+};
+
+const profilePageController = () => {
+  if (window.location.pathname === "/profile") {
+    model.state.ownPostsPage = 1;
+    profileView.renderProfileInfo(model.state.currentUser);
+    profileView.loadPage(model.getOwnPosts);
+    profileView.addPostInteractionListeners(model);
+    profileView.addProfileNavListeners(
+      model.getOwnPosts,
+      model.getLikedPosts,
+      model.state
+    );
   }
 };
 
@@ -56,6 +72,7 @@ const init = async () => {
   await menuController();
   homeController();
   savedPageController();
+  profilePageController();
 };
 
 init();

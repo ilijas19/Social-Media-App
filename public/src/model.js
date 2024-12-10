@@ -2,6 +2,9 @@ export const state = {
   currentUser: {},
   explorePage: 1,
   followingPage: 1,
+  savedPage: 1,
+  ownPostsPage: 1,
+  likedPage: 1,
 };
 
 export const loginUser = async (email, password) => {
@@ -67,6 +70,40 @@ export const getFollowingSectionPosts = async () => {
   }
 };
 
+export const getSavedPosts = async () => {
+  try {
+    const result = await axios.get(
+      `/api/v1/post/savedPosts?page=${state.savedPage}`
+    );
+    state.savedPage += 1;
+    return result.data.postsWithUserData;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const getLikedPosts = async () => {
+  try {
+    const result = await axios.get(
+      `/api/v1/post/likedPosts?page=${state.likedPage}`
+    );
+    state.likedPage += 1;
+    return result.data.postsWithUserData;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const getOwnPosts = async () => {
+  try {
+    const result = await axios.get(`/api/v1/post?page=${state.ownPostsPage}`);
+    state.ownPostsPage += 1;
+    return result.data.postsWithUserData;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
 export const saveUnsavePost = async (postId) => {
   try {
     const result = await axios.get(`/api/v1/post/${postId}/save`);
@@ -83,14 +120,5 @@ export const likeUnlikePost = async (postId) => {
   } catch (error) {
     alert(error.response.data.msg);
     window.location.reload();
-  }
-};
-
-export const getSavedPosts = async () => {
-  try {
-    const result = await axios.get("/api/v1/post/savedPosts");
-    return result.data.postsWithUserData;
-  } catch (error) {
-    alert(error.response.data.msg);
   }
 };
