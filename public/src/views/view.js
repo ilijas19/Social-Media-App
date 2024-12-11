@@ -1,9 +1,22 @@
 export default class View {
   _pageBackIcon = document.querySelector(".page-back-icon");
+  _selectedBackIcon = document.querySelector(".selected-back-icon");
   _selectedPostSection = document.querySelector(".selected-post-section");
   _mainSection = document.querySelector(".main");
+  _selectedPagePostDiv = document.querySelector(".selected-page-post");
+  _commentContainer = document.querySelector(".comment-container");
+  _commentForm = document.querySelector(".selected-post-form");
+  _commentInput = document.querySelector(".comment-input");
+  _commentSubmitFunction = null;
+  _commentDeleteFunction = null;
+  _currentUser = null;
+  _selectedPost = null;
 
   //---LOADING PAGE---\\ - based of handler that is being passed
+  setViewCurrentUser(currentUser) {
+    this._currentUser = currentUser;
+  }
+
   async loadPage(handler) {
     try {
       this._clearContainer();
@@ -91,6 +104,9 @@ export default class View {
   //--ADDING POST INTERACTION LISTENERS--\\
 
   addPostInteractionListeners(model) {
+    //setting current user
+    this.setViewCurrentUser(model.state.currentUser);
+
     this._postsContainer?.addEventListener("click", async (e) => {
       const target = e.target;
 
@@ -99,9 +115,13 @@ export default class View {
       }
 
       if (target.classList.contains("comment-icon")) {
-        this._handleComment(target.dataset.id);
-        this._mainSection.classList.add("hidden");
-        this._selectedPostSection.classList.remove("hidden");
+        this._handleComment(
+          target.dataset.id,
+          model.getSinglePost,
+          model.createComment,
+          target,
+          model.deleteComment
+        );
       }
 
       if (target.classList.contains("save-icon")) {
@@ -116,25 +136,155 @@ export default class View {
     await likeHandler(postId);
   }
 
-  _handleComment(postId) {
-    console.log(`Handle comment postId:${postId}`);
+  async _handleComment(
+    postId,
+    getPostHandler,
+    commentHandler,
+    target,
+    delCommentHandler
+  ) {
+    const post = await getPostHandler(postId);
+    this._toggleSelectedPostPage();
+    this._renderSelectedPost(post);
+    this._renderComments(post.comments, post);
+    this._addCommentListeners(commentHandler, postId, getPostHandler, target);
+    this._addDeleteListeners(delCommentHandler, getPostHandler, postId, target);
   }
 
   async _handleSave(postId, saveHandler, target) {
     this._toggleSaveBookmark(target);
     await saveHandler(postId);
   }
-  //---------------------------------------------\\
+  //---------SELECTED POST PAGE---------\\
+  _addDeleteListeners(delCommentHandler, getPostHandler, postId, target) {
+    this._commentContainer.removeEventListener(
+      "click",
+      this._commentDeleteFunction
+    );
+
+    this._commentDeleteFunction = async (e) => {
+      if (e.target.classList.contains("del-comment-div")) {
+        await delCommentHandler(e.target.dataset.id);
+        const post = await getPostHandler(postId);
+        this._renderComments(post.comments, post);
+        const commentCountEl = target.nextElementSibling;
+        commentCountEl.textContent = Number(commentCountEl.textContent) - 1;
+      }
+    };
+
+    this._commentContainer.addEventListener(
+      "click",
+      this._commentDeleteFunction
+    );
+  }
+
+  _toggleSelectedPostPage() {
+    // Check if _mainSection is hidden
+    const isMainSectionHidden = this._mainSection.classList.contains("hidden");
+
+    // Toggle classes based on the current state
+    if (isMainSectionHidden) {
+      this._mainSection.classList.remove("hidden");
+      this._selectedPostSection.classList.add("hidden");
+    } else {
+      this._mainSection.classList.add("hidden");
+      this._selectedPostSection.classList.remove("hidden");
+    }
+  }
+
+  _renderSelectedPost(post) {
+    this._selectedPost = post;
+    this._selectedPagePostDiv.innerHTML = "";
+    const html = `
+     <img src="${
+       post.publisherId.profilePicture
+     }" class="publisher-profile-photo" alt="" />
+          <p class="publisher-name">
+            ${post.publisherUsername} &middot;
+            <span>${this._formatDate(
+              post.createdAt
+            )}</span><i class="fa-solid fa-ellipsis"></i>
+          </p>
+          <p class="post-text">
+            ${post.text}
+          </p>
+          <div class="img-div">
+            <img src="${post.imgUrl}" alt="" class="post-img" />
+          </div>
+    `;
+    this._selectedPagePostDiv.insertAdjacentHTML("beforeend", html);
+  }
+
+  _renderComments(comments, post) {
+    console.log(post);
+    this._clearCommentContainer();
+    comments.forEach((comment) => {
+      const html = `
+      <li class="comment">
+            <img
+              src="${comment.userId.profilePicture}"
+              alt=""
+              class="menu-profile-img"
+            />
+            <div class="comment-info-div">
+              <p class="comment-info">
+                ${comment.userId.username} <span>${this._formatDate(
+        comment.createdAt
+      )}</span>
+              </p>
+             
+              ${
+                comment.userId.username === this._currentUser.username
+                  ? `<div class="del-comment-div" data-id=${comment._id}>Delete</div>`
+                  : " "
+              }
+              
+            </div>
+            <p class="comment-text">
+              ${comment.text}
+            </p>
+          </li>
+      `;
+      this._commentContainer.insertAdjacentHTML("afterbegin", html);
+    });
+  }
+
+  _addCommentListeners(commentHandler, postId, getPostHandler, target) {
+    //submiting form listeners
+    this._commentForm.removeEventListener(
+      "submit",
+      this._commentSubmitFunction
+    );
+
+    this._commentSubmitFunction = async (e) => {
+      e.preventDefault();
+      if (this._commentInput.value === "") return;
+      const text = this._commentInput.value;
+      await commentHandler(postId, text);
+      const post = await getPostHandler(postId);
+      this._renderComments(post.comments);
+      this._commentInput.value = "";
+      const commentCountEl = target.nextElementSibling;
+      commentCountEl.textContent = Number(commentCountEl.textContent) + 1;
+    };
+
+    this._commentForm.addEventListener("submit", this._commentSubmitFunction);
+  }
 
   //---HELPRERS---\\
+
   _clearContainer() {
     this._postsContainer.innerHTML = "";
+  }
+
+  _clearCommentContainer() {
+    this._commentContainer.innerHTML = "";
   }
 
   _formatDate(date) {
     const options = {
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
       hour: "numeric",
       minute: "2-digit",
@@ -178,6 +328,9 @@ export default class View {
   addPageBackListener() {
     this._pageBackIcon?.addEventListener("click", () => {
       window.location = "/home";
+    });
+    this._selectedBackIcon?.addEventListener("click", () => {
+      this._toggleSelectedPostPage();
     });
   }
 }

@@ -25,6 +25,7 @@ const menuController = async () => {
   }
   const currentUser = await model.getCurrentUser();
   model.state.currentUser = currentUser;
+
   menuView._usernameEl.textContent = model.state.currentUser.username;
   menuView.addPageMenuListeners();
   homeView.addPageBackListener();

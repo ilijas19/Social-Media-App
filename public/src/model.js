@@ -122,3 +122,31 @@ export const likeUnlikePost = async (postId) => {
     window.location.reload();
   }
 };
+
+export const getSinglePost = async (postId) => {
+  try {
+    const result = await axios.get(`/api/v1/post/${postId}`);
+    // console.log(result.data.post);
+    return result.data.post;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const createComment = async (postId, text) => {
+  try {
+    const result = await axios.post(`/api/v1/comment/${postId}`, { text });
+    console.log(result.data);
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const deleteComment = async (commentId) => {
+  try {
+    const result = await axios.delete(`/api/v1/comment/${commentId}`);
+    console.log(result.data.msg);
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
