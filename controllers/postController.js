@@ -64,7 +64,19 @@ const getSinglePost = async (req, res) => {
   if (!postId) {
     throw new CustomError.BadRequestError("Post id needs to be provided");
   }
-  const post = await Post.findOne({ _id: postId });
+  const post = await Post.findOne({ _id: postId })
+    .populate({
+      path: "publisherId",
+      select: "profilePicture",
+    })
+    .populate({
+      path: "comments",
+      populate: {
+        path: "userId",
+        select: "profilePicture username",
+      },
+    });
+
   if (!post) {
     throw new CustomError.NotFoundError(`No post with id: ${postId}`);
   }
