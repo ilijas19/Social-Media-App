@@ -96,47 +96,11 @@
 
       <section class="selected-post-section hidden">
         <div class="selected-post-header">
-          <i class="fa-solid fa-arrow-left page-back-icon"></i>
-          <p>Post</p>
+          <i class="fa-solid fa-arrow-left selected-back-icon"></i>
+          <p>Post Comments</p>
         </div>
 
-        <div class="post" value="${post._id}">
-          <img
-            src="${post.publisherId.profilePicture}"
-            class="publisher-profile-photo"
-            alt=""
-          />
-          <p class="publisher-name">
-            Ilijas &middot;
-            <span>2:45pm</span><i class="fa-solid fa-ellipsis"></i>
-          </p>
-          <p class="post-text">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis
-            nihil, commodi deleniti molestias qui quisquam facere nesciunt fugit
-            sint illum, eius eligendi fugiat quos, illo aut distinctio dicta!
-            Quaerat, fugit?
-          </p>
-          <div class="img-div">
-            <img src="" alt="" class="post-img" />
-          </div>
-          <div class="post-interaction">
-            <div class="interaction-div like-div">
-              <i
-                class="fa-solid fa-heart icon like-icon"
-                data-id="${post._id}"
-              ></i>
-              <p class="like-number number">2</p>
-            </div>
-            <div class="interaction-div comment-div">
-              <i class="fa-regular fa-comment icon comment-icon"></i>
-              <p class="comment-number number">2</p>
-            </div>
-            <i
-              class="fa-regular fa-bookmark icon save-icon"
-              data-id="${post._id}"
-            ></i>
-          </div>
-        </div>
+        <div class="post selected-page-post"></div>
 
         <form class="selected-post-form">
           <img

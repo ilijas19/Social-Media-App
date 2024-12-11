@@ -64,6 +64,7 @@
   padding: 2rem 1rem;
   display: grid;
   grid-template-columns: 5rem 1fr;
+  position: relative;
 }
 
 .comment-info-div {
@@ -79,6 +80,9 @@
   width: fit-content;
   padding: 0 1rem;
   padding-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 .comment-info span {
   color: #b4b4b4;
@@ -105,4 +109,17 @@
   padding: 1rem;
   cursor: pointer;
   transition: all 0.4s;
+}
+.del-comment-div {
+  color: #880808;
+  font-size: 1.3rem;
+  padding: 0.3rem;
+  border: 2px solid #880808;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  cursor: pointer;
 }
