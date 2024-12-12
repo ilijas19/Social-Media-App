@@ -6,7 +6,8 @@ const PostSchema = new mongoose.Schema(
     type: {
       type: String,
       enum: ["status", "post"],
-      required: true,
+      default: "post",
+      // required: true,
     },
     publisherId: {
       type: mongoose.Types.ObjectId,
