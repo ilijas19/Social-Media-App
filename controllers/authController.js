@@ -148,7 +148,7 @@ const logoutUser = async (req, res) => {
 
 const getCurrentUser = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId }).select(
-    "_id username email bio privacy numFollowers numFollowing profilePicture"
+    "_id username email bio privacy numFollowers numFollowing profilePicture posts"
   );
   res.status(StatusCodes.OK).json({ currentUser: user });
 };

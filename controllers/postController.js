@@ -9,54 +9,53 @@ const fs = require("fs").promises;
 
 const createPost = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
-  const { type, text } = req.body;
-  if (!type) throw new CustomError.BadRequestError("Type must be provided");
+  const { text } = req.body;
+  // if (!type) throw new CustomError.BadRequestError("Type must be provided");
 
-  if (type === "post") {
-    if (!req.files) {
-      throw new CustomError.BadRequestError("Image must be provided");
-    }
-    const file = req.files.image;
-    const fileCheck = checkFile(file);
+  // if (type === "post") {
+  if (!req.files) {
+    throw new CustomError.BadRequestError("Image must be provided");
+  }
+  const file = req.files.image;
+  const fileCheck = checkFile(file);
 
-    if (!fileCheck) {
-      await fs.unlink(file.tempFilePath);
-
-      throw new CustomError.BadRequestError(
-        "File not supported or excedes 2mb"
-      );
-    }
-
-    const { secure_url } = await cloudinary.uploader.upload(file.tempFilePath, {
-      folder: "social-media-app",
-    });
+  if (!fileCheck) {
     await fs.unlink(file.tempFilePath);
-    const post = await Post.create({
-      publisherId: user._id,
-      publisherUsername: user.username,
-      postPrivacy: user.privacy,
-      text,
-      type,
-      imgUrl: secure_url,
-    });
-    user.posts.push(post._id);
-    await user.save();
-    return res.status(StatusCodes.CREATED).json({ post });
+
+    throw new CustomError.BadRequestError("File not supported or excedes 2mb");
   }
-  if (type === "status") {
-    if (!text) {
-      throw new CustomError.BadRequestError("Status text must be provided");
-    }
-    const post = await Post.create({
-      publisherId: user._id,
-      publisherUsername: user.username,
-      text,
-      type,
-    });
-    user.posts.push(post._id);
-    await user.save();
-    return res.status(StatusCodes.CREATED).json({ post });
-  }
+
+  const { secure_url } = await cloudinary.uploader.upload(file.tempFilePath, {
+    folder: "social-media-app",
+  });
+  await fs.unlink(file.tempFilePath);
+  const post = await Post.create({
+    publisherId: user._id,
+    publisherUsername: user.username,
+    postPrivacy: user.privacy,
+    text,
+    // type,
+    imgUrl: secure_url,
+  });
+  user.posts.push(post._id);
+  await user.save();
+  return res.status(StatusCodes.CREATED).json({ post });
+  // }
+
+  // if (type === "status") {
+  //   if (!text) {
+  //     throw new CustomError.BadRequestError("Status text must be provided");
+  //   }
+  //   const post = await Post.create({
+  //     publisherId: user._id,
+  //     publisherUsername: user.username,
+  //     text,
+  //     type,
+  //   });
+  //   user.posts.push(post._id);
+  //   await user.save();
+  //   return res.status(StatusCodes.CREATED).json({ post });
+  // }
 };
 
 const getSinglePost = async (req, res) => {

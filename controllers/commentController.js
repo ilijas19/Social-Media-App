@@ -53,26 +53,51 @@ const editComment = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Comment Updated", comment });
 };
 
+// const deleteComment = async (req, res) => {
+//   const { id: commentId } = req.params;
+//   if (!commentId) {
+//     throw new CustomError.BadRequestError("Comment id needs to be provided");
+//   }
+//   const comment = await Comment.findOne({
+//     _id: commentId,
+//     userId: req.user.userId,
+//   });
+//   if (!comment) {
+//     throw new CustomError.BadRequestError(
+//       `No comment with id: ${commentId} found in your comments`
+//     );
+//   }
+//   const post = await Post.findOne({ _id: comment.postId });
+//   post.comments = post.comments.filter((id) => id.toString() !== commentId);
+
+//   await comment.deleteOne();
+//   await post.save();
+//   res.status(StatusCodes.OK).json({ msg: "Comment Deleted" });
+// };
+
 const deleteComment = async (req, res) => {
   const { id: commentId } = req.params;
   if (!commentId) {
     throw new CustomError.BadRequestError("Comment id needs to be provided");
   }
-  const comment = await Comment.findOne({
-    _id: commentId,
-    userId: req.user.userId,
-  });
+  const comment = await Comment.findOne({ _id: commentId });
   if (!comment) {
-    throw new CustomError.BadRequestError(
-      `No comment with id: ${commentId} found in your comments`
-    );
+    throw new CustomError.NotFoundError(`No comment ${commentId}`);
   }
   const post = await Post.findOne({ _id: comment.postId });
-  post.comments = post.comments.filter((id) => id.toString() !== commentId);
+  if (!post) throw new CustomError.NotFoundError(`No post ${comment.postId}`);
 
-  await comment.deleteOne();
-  await post.save();
-  res.status(StatusCodes.OK).json({ msg: "Comment Deleted" });
+  const isOwnPost = post.publisherId.toString() === req.user.userId.toString();
+  const isOwnComment = comment.userId.toString() === req.user.userId.toString();
+  if (isOwnPost || isOwnComment) {
+    post.comments = post.comments.filter((id) => id.toString() !== commentId);
+    await comment.deleteOne();
+    await post.save();
+    return res.status(StatusCodes.OK).json({ msg: "Comment Deleted" });
+  }
+  throw new CustomError.UnauthorizedError(
+    "Not Authorized to delete this comment"
+  );
 };
 
 const getCommentsFromPost = async (req, res) => {
