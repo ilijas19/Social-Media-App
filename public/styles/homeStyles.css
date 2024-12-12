@@ -471,3 +471,6 @@ body {
 .cDdd {
   color: #ddd;
 }
+.post {
+  position: relative;
+}

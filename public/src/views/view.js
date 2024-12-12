@@ -34,6 +34,7 @@ export default class View {
     //handler passed from load page()
     //rendering fetched posts
     posts.forEach((post) => {
+      const isOwnPost = this._currentUser.posts.includes(post._id);
       const postEl = `
       <li class="post" value=${post._id}>
             <img 
@@ -44,7 +45,11 @@ export default class View {
             <p class="publisher-name">
               ${post.publisherUsername} &middot; <span>${this._formatDate(
         post.createdAt
-      )}</span><i class="fa-solid fa-ellipsis"></i>
+      )}</span>${
+        isOwnPost
+          ? `<i class="fa-solid fa-trash del-post-icon cRed" data-id=${post._id}></i>`
+          : ""
+      } 
             </p>
                <p class="post-text">
              ${post.text}
@@ -127,6 +132,13 @@ export default class View {
       if (target.classList.contains("save-icon")) {
         await this._handleSave(target.dataset.id, model.saveUnsavePost, target);
       }
+
+      if (target.classList.contains("del-post-icon")) {
+        const anwser = prompt('Type "Delete" if you want to delete your post');
+        if (anwser === "Delete") {
+          await this._handlePostDeletion(target.dataset.id, model.deletePost);
+        }
+      }
     });
   }
 
@@ -154,6 +166,11 @@ export default class View {
   async _handleSave(postId, saveHandler, target) {
     this._toggleSaveBookmark(target);
     await saveHandler(postId);
+  }
+
+  async _handlePostDeletion(postId, deletePostHandler) {
+    await deletePostHandler(postId);
+    window.location.reload();
   }
   //---------SELECTED POST PAGE---------\\
   _addDeleteListeners(delCommentHandler, getPostHandler, postId, target) {
@@ -216,7 +233,7 @@ export default class View {
   }
 
   _renderComments(comments, post) {
-    console.log(post);
+    const isOwnPost = this._currentUser.posts.includes(post._id);
     this._clearCommentContainer();
     comments.forEach((comment) => {
       const html = `
@@ -234,7 +251,8 @@ export default class View {
               </p>
              
               ${
-                comment.userId.username === this._currentUser.username
+                comment.userId.username === this._currentUser.username ||
+                isOwnPost
                   ? `<div class="del-comment-div" data-id=${comment._id}>Delete</div>`
                   : " "
               }

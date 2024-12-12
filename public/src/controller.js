@@ -43,6 +43,9 @@ const homeController = async () => {
       model.getFollowingSectionPosts,
       model.state
     );
+    //--- PUBLISHING POSTS ---\\
+    homeView.addPostFormListeners(model.createPost);
+    homeView._addFileInputListener();
   }
 };
 

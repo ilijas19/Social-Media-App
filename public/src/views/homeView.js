@@ -6,6 +6,9 @@ class homeView extends View {
   _postsContainer = document.querySelector(".post-container");
   _exploreBtn = document.getElementById("explore-btn");
   _followingBtn = document.getElementById("following-btn");
+  _postForm = document.querySelector(".post-form");
+  _postInput = document.querySelector(".post-input");
+  _createPostFunction = null;
 
   //---SWITCHING SECTIONS---\\
   addSectionNavigationListeners(
@@ -28,6 +31,32 @@ class homeView extends View {
     });
   }
 
+  //---PUBLISHING POSTS---\\
+  addPostFormListeners(handler) {
+    this._postForm.removeEventListener("submit", this._createPostFunction);
+
+    this._createPostFunction = async (e) => {
+      e.preventDefault();
+
+      const text = this._postInput.value.trim(); //  text
+      const imageFile = this._fileInput.files[0]; //  selected file
+
+      this._postInput.value = "";
+      this._fileInput.value = "";
+
+      if (!text || !imageFile) {
+        alert("Please provide both text and an image.");
+        return;
+      }
+
+      const post = await handler(text, imageFile);
+      window.location.reload();
+    };
+
+    this._postForm.addEventListener("submit", this._createPostFunction);
+  }
+
+  //--HELPERS--\\
   _toggleSelectedNavClass(el) {
     document
       .querySelectorAll(".navigation li")

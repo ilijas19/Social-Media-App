@@ -150,3 +150,29 @@ export const deleteComment = async (commentId) => {
     alert(error.response.data.msg);
   }
 };
+
+export const createPost = async (text, imageFile) => {
+  try {
+    const formData = new FormData(); // To handle the file upload
+    formData.append("text", text);
+    formData.append("image", imageFile);
+
+    const result = await axios.post("/api/v1/post", formData);
+
+    console.log("Post created:");
+    return result.data.post;
+  } catch (error) {
+    alert(
+      error.response?.data?.msg || "An error occurred while creating the post."
+    );
+  }
+};
+
+export const deletePost = async (postId) => {
+  try {
+    const result = await axios.delete(`/api/v1/post/${postId}`);
+    console.log(result.data.msg);
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
