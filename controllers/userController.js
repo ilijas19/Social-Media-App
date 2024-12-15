@@ -123,7 +123,7 @@ const getUserFollowers = async (req, res) => {
   }
 
   const followersWithUserData = user.followers.map((follower) => {
-    const following = currentUser.followers.includes(follower._id);
+    const following = currentUser.following.includes(follower._id);
     const me = follower.username === req.user.username;
     return { ...follower.toJSON(), following, me };
   });
@@ -157,7 +157,7 @@ const getUserFollowing = async (req, res) => {
   const currentUser = await User.findOne({ _id: req.user.userId });
 
   const followingWithUserData = user.following.map((user) => {
-    const following = currentUser.followers.includes(user._id);
+    const following = currentUser.following.includes(user._id);
     const me = user.username === req.user.username;
     return { ...user.toJSON(), following, me };
   });
