@@ -3,7 +3,7 @@ const { StatusCodes } = require("http-status-codes");
 
 const errorHandler = (err, req, res, next) => {
   if (err instanceof CustomApiError) {
-    res.status(err.statusCode).json({ msg: err.message });
+    return res.status(err.statusCode).json({ msg: err.message });
   }
   if (err.code === 11000) {
     const duplicate = Object.keys(err.keyValue);
@@ -12,12 +12,14 @@ const errorHandler = (err, req, res, next) => {
       .json({ msg: `Specified ${duplicate[0]} already exists` });
   }
   if (err.name === "ValidationError") {
-    res
+    return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: `Missing ${Object.keys(err.errors)} value` });
   }
   if (err.name === "CastError") {
-    res.status(StatusCodes.OK).json({ msg: `${err.value} is not valid id` });
+    return res
+      .status(StatusCodes.OK)
+      .json({ msg: `${err.value} is not valid id` });
   }
   res
     .status(StatusCodes.INTERNAL_SERVER_ERROR)
