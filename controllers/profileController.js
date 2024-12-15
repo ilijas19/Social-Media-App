@@ -53,6 +53,44 @@ const getUserProfile = async (req, res) => {
   res.status(StatusCodes.OK).json({ user });
 };
 
+const getUserProfilePosts = async (req, res) => {
+  const { name: username } = req.params;
+  const { page = 1 } = req.query;
+  if (!username) {
+    throw new CustomError.BadRequestError("Username Must be provided");
+  }
+  const limit = 10;
+  const skip = (page - 1) * limit;
+
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    throw new CustomError.NotFoundError(`No user with ${username} username`);
+  }
+  if (user.privacy === "private") {
+    if (!user.followers.includes(req.user.userId)) {
+      throw new CustomError.UnauthorizedError("Follow User to see his profile");
+    }
+  }
+  const posts = await Post.find({ publisherId: user._id })
+    .populate({
+      path: "publisherId",
+      select: "profilePicture",
+    })
+    .skip(skip)
+    .limit(limit);
+
+  const postsWithUserData = posts.map((post) => {
+    const isLiked = post.likes.includes(user._id);
+    const isSaved = user.savedPosts.includes(post._id);
+    return { ...post.toJSON(), isLiked, isSaved };
+  });
+
+  res
+    .status(StatusCodes.OK)
+    .json({ nbHits: postsWithUserData.length, page, postsWithUserData });
+};
+
 const deleteProfile = async (req, res) => {
   const { password } = req.body;
   if (!password) {
@@ -105,6 +143,7 @@ module.exports = {
   changeProfilePrivacy,
   getOwnProfile,
   getUserProfile,
+  getUserProfilePosts,
   deleteProfile,
   updateProfilePicture,
   updateBio,

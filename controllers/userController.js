@@ -40,111 +40,198 @@ const searchForUser = async (req, res) => {
   if (username) {
     queryObject.username = { $regex: username, $options: "i" };
   }
-  const users = await User.find(queryObject);
+  const users = await User.find(queryObject).select(
+    "_id username profilePicture privacy"
+  );
   res.status(StatusCodes.OK).json({ users });
 };
 
-const followUser = async (req, res) => {
+const followUnfollowUser = async (req, res) => {
+  const { username } = req.params;
+  let msg;
+  if (!username) {
+    throw new CustomError.BadRequestError("Username must be provided");
+  }
+  if (username === req.user.username) {
+    throw new CustomError.BadRequestError("Cant follow yourself");
+  }
+
+  const user = await User.findOne({ username });
+  const currentUser = await User.findOne({ _id: req.user.userId });
+  if (!user) {
+    throw new CustomError.NotFoundError("No user with specified username");
+  }
+  //FOLLOW REQUEST('Private profile')
+  if (user.privacy === "private") {
+    if (user.followRequests.includes(req.user.userId)) {
+      msg = "Request Removed";
+      user.followRequests = user.followRequests.filter(
+        (id) => id.toString() !== req.user.userId
+      );
+    } else {
+      user.followRequests.push(req.user.userId);
+      msg = "Request Sent";
+    }
+    await user.save();
+    return res.status(StatusCodes.OK).json({ msg });
+  }
+  //UNFOLLOW
+  if (user.followers.includes(req.user.userId)) {
+    user.followers = user.followers.filter(
+      (follower) => follower.toString() !== req.user.userId
+    );
+    currentUser.following = currentUser.following.filter(
+      (id) => id.toString() !== user._id.toString()
+    );
+    msg = "User Unfollowed";
+  } else {
+    //FOLLOW
+    user.followers.push(req.user.userId);
+    currentUser.following.push(user._id);
+    msg = "User Followed";
+  }
+  await user.save();
+  await currentUser.save();
+  return res.status(StatusCodes.OK).json({ msg });
+};
+
+const getUserFollowers = async (req, res) => {
   const { username } = req.params;
   if (!username) {
     throw new CustomError.BadRequestError("Username must be provided");
   }
-  const user = await User.findOne({ username }).select(
-    "username following followers followRequests numFollowing numFollowers privacy"
-  );
+  const user = await User.findOne({ username }).populate({
+    path: "followers",
+    select: "username _id profilePicture",
+  });
+
+  const currentUser = await User.findOne({ _id: req.user.userId });
+
   if (!user) {
-    throw new CustomError.NotFoundError("No user with specified username");
+    throw new CustomError.BadRequestError(`No user with username ${username}`);
   }
-  if (user._id.toString() === req.user.userId.toString()) {
-    throw new CustomError.BadRequestError("Cant follow yourself");
-  }
-  if (user.followers.includes(req.user.userId)) {
-    throw new CustomError.BadRequestError("You already follow this user");
-  }
-  //IF USER IS PRIVATE
-  if (user.privacy === "private") {
-    if (user.followRequests.includes(req.user.userId)) {
-      throw new CustomError.BadRequestError("You already sent follow request");
+
+  if (user.privacy === "private" && user.username !== req.user.username) {
+    const isFollower = user.followers.some(
+      (id) => id._id.toString() === req.user.userId
+    );
+    if (!isFollower) {
+      throw new CustomError.UnauthorizedError(
+        "You are not following specified user"
+      );
     }
-    user.followRequests.push(req.user.userId);
-    await user.save();
-    return res.status(StatusCodes.OK).json({ user });
   }
-  //IF USER PRIVACY IS PUBLIC
-  const currentUser = await User.findOne({ _id: req.user.userId }).select(
-    "username following followers followRequests numFollowing numFollowers privacy"
-  );
-  currentUser.following.push(user._id);
-  user.followers.push(req.user.userId);
-  await currentUser.save();
-  await user.save();
-  res.status(StatusCodes.OK).json({ candidate: user, currentUser });
+
+  const followersWithUserData = user.followers.map((follower) => {
+    const following = currentUser.followers.includes(follower._id);
+    const me = follower.username === req.user.username;
+    return { ...follower.toJSON(), following, me };
+  });
+  return res.status(StatusCodes.OK).json({ followers: followersWithUserData });
 };
 
-const unfollowUser = async (req, res) => {
+//not done
+const getUserFollowing = async (req, res) => {
   const { username } = req.params;
   if (!username) {
-    throw new CustomError.BadRequestError("Username must be providied");
+    throw new CustomError.BadRequestError("Username must be provided");
   }
-  const user = await User.findOne({ username }).select(
-    "username following followers followRequests numFollowing numFollowers privacy"
-  );
+
+  const user = await User.findOne({ username }).populate({
+    path: "following",
+    select: "_id username profilePicture",
+  });
 
   if (!user) {
     throw new CustomError.NotFoundError("No user with specified username");
   }
-  if (!user.followers.includes(req.user.userId)) {
-    throw new CustomError.BadRequestError("You are not following this user");
+
+  if (user.privacy === "private" && user.username !== req.user.username) {
+    if (!user.followers.includes(req.user.userId)) {
+      throw new CustomError.UnauthorizedError(
+        "You are not following specified user"
+      );
+    }
   }
-  const currentUser = await User.findOne({ _id: req.user.userId }).select(
-    "username following followers followRequests numFollowing numFollowers privacy"
-  );
 
-  currentUser.following = user.following.filter(
-    (id) => id.toString() !== user._id
-  );
+  const currentUser = await User.findOne({ _id: req.user.userId });
 
-  user.followers = user.followers.filter(
-    (id) => id.toString() !== req.user.userId.toString()
-  );
-
-  await currentUser.save();
-  await user.save();
-  res.status(StatusCodes.OK).json({ candidate: user, currentUser });
-};
-
-const getFollowers = async (req, res) => {
-  const user = await User.findOne({ _id: req.user.userId }).populate({
-    path: "followers",
-    select: "username profilePicture",
+  const followingWithUserData = user.following.map((user) => {
+    const following = currentUser.followers.includes(user._id);
+    const me = user.username === req.user.username;
+    return { ...user.toJSON(), following, me };
   });
-  res.status(StatusCodes.OK).json({ followers: user.followers });
-};
 
-const getFollowing = async (req, res) => {
-  const user = await User.findOne({ _id: req.user.userId }).populate({
-    path: "following",
-    select: "username profilePicture",
-  });
-  res.status(StatusCodes.OK).json({ followingList: user.following });
+  res.status(StatusCodes.OK).json({ following: followingWithUserData });
 };
 
 const getFollowRequests = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId }).populate({
     path: "followRequests",
-    select: "username profilePicture",
+    select: "username profilePicture _id",
   });
   res.status(StatusCodes.OK).json({ requests: user.followRequests });
+};
+
+const acceptFollowRequest = async (req, res) => {
+  const { username } = req.body;
+  if (!username) {
+    throw new CustomError.BadRequestError("Username Must Be Provided");
+  }
+  const user = await User.findOne({ username });
+  if (!user) {
+    throw new CustomError.NotFoundError("No user with specified username");
+  }
+  const currentUser = await User.findOne({ _id: req.user.userId });
+  if (!currentUser.followRequests.includes(user._id)) {
+    throw new CustomError.NotFoundError(
+      "User with specified username is not in your requests"
+    );
+  }
+  user.following.push(currentUser._id);
+  currentUser.followers.push(user._id);
+  currentUser.followRequests = currentUser.followRequests.filter(
+    (id) => id.toString() !== user._id.toString()
+  );
+  await user.save();
+  await currentUser.save();
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "Request accepted", currentUser, user });
+};
+
+const declineFollowRequest = async (req, res) => {
+  const { username } = req.body;
+  if (!username) {
+    throw new CustomError.BadRequestError("username must be provided");
+  }
+  const user = await User.findOne({ username });
+  if (!user) {
+    throw new CustomError.NotFoundError(
+      "User with specified username was not found"
+    );
+  }
+  const currentUser = await User.findOne({ _id: req.user.userId });
+  if (!currentUser.followRequests.includes(user._id)) {
+    throw new CustomError.NotFoundError(
+      "User with specified username is not in your requests"
+    );
+  }
+  currentUser.followRequests = currentUser.followRequests.filter(
+    (id) => id.toString() !== user._id.toString()
+  );
+  res.status(StatusCodes.OK).json({ msg: "Request declined" });
 };
 
 module.exports = {
   getAllUsers,
   getSingleUser,
   deleteUser,
-  followUser,
-  unfollowUser,
   searchForUser,
-  getFollowers,
-  getFollowing,
+  followUnfollowUser,
   getFollowRequests,
+  getUserFollowers,
+  getUserFollowing,
+  acceptFollowRequest,
+  declineFollowRequest,
 };
