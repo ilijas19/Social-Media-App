@@ -82,10 +82,13 @@
               </p>
             </div>
             <ul class="profile-nav">
-              <li class="profile-nav-item selected-nav-item">Posts</li>
-              <li class="profile-nav-item">Liked</li>
+              <li class="profile-nav-item selected-nav-item posts-nav-item">
+                Posts
+              </li>
+              <li class="profile-nav-item liked-nav-item">Liked</li>
             </ul>
             <button class="edit-profile-btn">Edit profile</button>
+            <button class="edit-profile-btn follow-profile-btn">Follow</button>
           </div>
         </section>
         <ul class="post-container">
@@ -156,6 +159,26 @@
               impedit sit autem! Impedit harum quasi optio doloribus consequatur
               est in error voluptatem.
             </p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="follow-section hidden">
+        <div class="selected-post-header">
+          <i
+            class="fa-solid fa-arrow-left selected-back-icon following-back-icon"
+          ></i>
+          <p>Following</p>
+        </div>
+        <nav class="following-nav">
+          <div class="nav-item following-item selected-nav-item">Following</div>
+          <div class="nav-item followers-item">Followers</div>
+        </nav>
+        <ul class="profile-container">
+          <li class="profile">
+            <img src="" alt="" class="profile-pic" />
+            <p class="profile-username">Ilijas19</p>
+            <button class="unfollow-button">Unfollow</button>
           </li>
         </ul>
       </section>
