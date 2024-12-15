@@ -11,6 +11,7 @@ const {
   changeProfilePrivacy, // '/privacy'
   getOwnProfile, //  '/'
   getUserProfile, // '/:id'
+  getUserProfilePosts,
   deleteProfile, // '/'
   updateProfilePicture, // '/profilePhoto'
 
@@ -26,5 +27,6 @@ router.post("/privacy", authenticateUser, changeProfilePrivacy);
 router.patch("/profilePhoto", authenticateUser, updateProfilePicture);
 router.patch("/bio", authenticateUser, updateBio);
 router.route("/:name").get(authenticateUser, getUserProfile);
+router.get("/profilePosts/:name", authenticateUser, getUserProfilePosts);
 
 module.exports = router;
