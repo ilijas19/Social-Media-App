@@ -2,6 +2,7 @@
 rgb(21, 32, 43)
 #32414d
  */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 * {
   margin: 0;
   padding: 0;
@@ -12,7 +13,7 @@ html {
 }
 body {
   background-color: rgb(21, 32, 43);
-  font-family: "Helvetica", "Arial", sans-serif;
+  font-family: "Roboto";
 }
 .hidden {
   display: none !important;
@@ -161,6 +162,7 @@ body {
   cursor: pointer;
   transition: all 0.4s;
   font-weight: bold;
+  display: none;
 }
 
 .edit-profile-btn:hover {
@@ -212,7 +214,7 @@ body {
 }
 .selected-nav-item {
   background-color: #f6f6f6;
-  color: rgb(21, 32, 43);
+  color: rgb(21, 32, 43) !important;
 }
 
 .post-container {
@@ -371,4 +373,115 @@ html {
 }
 .cDdd {
   color: #ddd;
+}
+
+/* FOLLOW-SECTION */
+.follow-section {
+  grid-column: 2;
+  border: 1px solid #4e4e4e;
+}
+.following-nav {
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid #4e4e4e;
+}
+.nav-item {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #f6f6f6;
+  font-size: 1.6rem;
+  font-weight: bold;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+.nav-item:hover {
+  background-color: #ddd;
+  color: rgb(21, 32, 43);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.7rem 1.2rem;
+  border-bottom: 1px solid #4e4e4e;
+}
+
+.profile-pic {
+  height: 4rem;
+  width: 4rem;
+  border-radius: 50%;
+  background-color: #4e4e4e;
+}
+.profile-username {
+  color: #ddd;
+  font-weight: 500;
+  font-size: 1.7rem;
+  transition: all 0.4s;
+  cursor: pointer;
+}
+.profile-username:hover {
+  text-decoration: underline;
+}
+
+.unfollow-button {
+  /* margin-left: auto; */
+  background-color: transparent;
+  border: 2px solid #780606;
+  padding: 0.7rem;
+  font-size: 1.5rem;
+  color: #780606;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 8rem;
+}
+.follow-button {
+  /* margin-left: auto; */
+  background-color: transparent;
+  border: 2px solid #f6f6f6;
+  padding: 0.7rem;
+  font-size: 1.5rem;
+  color: #f6f6f6;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 8rem;
+}
+
+.profile-container {
+  min-height: 50%;
+}
+
+.following-spinner {
+  margin: 15rem auto;
+  width: 5.5rem;
+  height: 5.5rem;
+  border: 0.5rem solid #f3f3f3; /* Light gray border */
+  border-top: 0.5rem solid #3498db; /* Blue border for the spinning effect */
+  border-radius: 50%; /* Make it a circle */
+  animation: spin 1s linear infinite; /* Infinite spinning animation */
+}
+
+/* Spinning keyframes */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+/*  */
+.mini-spinner {
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 0.2rem solid #f6f6f6;
+  border-top: 0.2rem solid transparent;
+  border-radius: 50%;
+  margin-left: auto;
+  opacity: 0;
 }
