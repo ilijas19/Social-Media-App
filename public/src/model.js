@@ -5,6 +5,7 @@ export const state = {
   savedPage: 1,
   ownPostsPage: 1,
   likedPage: 1,
+  searchedUserPostPAge: 1,
 };
 
 export const loginUser = async (email, password) => {
@@ -172,6 +173,67 @@ export const deletePost = async (postId) => {
   try {
     const result = await axios.delete(`/api/v1/post/${postId}`);
     console.log(result.data.msg);
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const searchForUser = async (username) => {
+  try {
+    const response = await axios.post(
+      `/api/v1/user/search?username=${username}`
+    );
+    // console.log(response.data.users);
+    return response.data.users;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const getUserProfile = async (username) => {
+  try {
+    const result = await axios.get(`/api/v1/profile/${username}`);
+    return result.data.user;
+  } catch (error) {}
+};
+
+export const getUserProfilePosts = async (username) => {
+  try {
+    const result = await axios.get(
+      `/api/v1/profile/profilePosts/${username}?page=${state.searchedUserPostPAge}`
+    );
+    state.searchedUserPostPAge += 1;
+    // console.log(result.data.postsWithUserData);
+    return result.data.postsWithUserData;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const getUserFollowing = async (username) => {
+  try {
+    const result = await axios.get(`/api/v1/user/following/${username}`);
+    console.log(result.data.following);
+    return result.data.following;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const getUserFollowers = async (username) => {
+  try {
+    const result = await axios.get(`/api/v1/user/followers/${username}`);
+    console.log(result.data.followers);
+    return result.data.followers;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const followUnfollowUser = async (username) => {
+  try {
+    const response = await axios.get(`/api/v1/user/followUnfollow/${username}`);
+    console.log(response.data.msg);
   } catch (error) {
     alert(error.response.data.msg);
   }
