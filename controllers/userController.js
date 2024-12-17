@@ -61,20 +61,7 @@ const followUnfollowUser = async (req, res) => {
   if (!user) {
     throw new CustomError.NotFoundError("No user with specified username");
   }
-  //FOLLOW REQUEST('Private profile')
-  if (user.privacy === "private") {
-    if (user.followRequests.includes(req.user.userId)) {
-      msg = "Request Removed";
-      user.followRequests = user.followRequests.filter(
-        (id) => id.toString() !== req.user.userId
-      );
-    } else {
-      user.followRequests.push(req.user.userId);
-      msg = "Request Sent";
-    }
-    await user.save();
-    return res.status(StatusCodes.OK).json({ msg });
-  }
+
   //UNFOLLOW
   if (user.followers.includes(req.user.userId)) {
     user.followers = user.followers.filter(
@@ -85,6 +72,20 @@ const followUnfollowUser = async (req, res) => {
     );
     msg = "User Unfollowed";
   } else {
+    //FOLLOW REQUEST('Private profile')
+    if (user.privacy === "private") {
+      if (user.followRequests.includes(req.user.userId)) {
+        msg = "Request Removed";
+        user.followRequests = user.followRequests.filter(
+          (id) => id.toString() !== req.user.userId
+        );
+      } else {
+        user.followRequests.push(req.user.userId);
+        msg = "Request Sent";
+      }
+      await user.save();
+      return res.status(StatusCodes.OK).json({ msg });
+    }
     //FOLLOW
     user.followers.push(req.user.userId);
     currentUser.following.push(user._id);
@@ -102,7 +103,7 @@ const getUserFollowers = async (req, res) => {
   }
   const user = await User.findOne({ username }).populate({
     path: "followers",
-    select: "username _id profilePicture",
+    select: "username _id profilePicture followRequests",
   });
 
   const currentUser = await User.findOne({ _id: req.user.userId });
@@ -123,14 +124,14 @@ const getUserFollowers = async (req, res) => {
   }
 
   const followersWithUserData = user.followers.map((follower) => {
+    const requested = follower.followRequests.includes(currentUser._id);
     const following = currentUser.following.includes(follower._id);
     const me = follower.username === req.user.username;
-    return { ...follower.toJSON(), following, me };
+    return { ...follower.toJSON(), following, me, requested };
   });
   return res.status(StatusCodes.OK).json({ followers: followersWithUserData });
 };
 
-//not done
 const getUserFollowing = async (req, res) => {
   const { username } = req.params;
   if (!username) {
@@ -139,7 +140,7 @@ const getUserFollowing = async (req, res) => {
 
   const user = await User.findOne({ username }).populate({
     path: "following",
-    select: "_id username profilePicture",
+    select: "_id username profilePicture followRequests",
   });
 
   if (!user) {
@@ -157,9 +158,10 @@ const getUserFollowing = async (req, res) => {
   const currentUser = await User.findOne({ _id: req.user.userId });
 
   const followingWithUserData = user.following.map((user) => {
+    const requested = user.followRequests.includes(currentUser._id);
     const following = currentUser.following.includes(user._id);
     const me = user.username === req.user.username;
-    return { ...user.toJSON(), following, me };
+    return { ...user.toJSON(), following, me, requested };
   });
 
   res.status(StatusCodes.OK).json({ following: followingWithUserData });

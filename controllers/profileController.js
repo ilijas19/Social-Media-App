@@ -40,17 +40,33 @@ const getUserProfile = async (req, res) => {
     throw new CustomError.BadRequestError("Username Must be provided");
   }
   const user = await User.findOne({ username }).select(
-    "username profilePicture followers following posts bio numFollowing numFollowers privacy "
+    "username profilePicture followers following posts bio numFollowing numFollowers privacy followRequests"
   );
   if (!user) {
     throw new CustomError.NotFoundError(`No user with ${username} username`);
   }
   if (user.privacy === "private") {
     if (!user.followers.includes(req.user.userId)) {
-      throw new CustomError.UnauthorizedError("Follow User to see his profile");
+      const requested = user.followRequests.includes(req.user.userId);
+      const privateUser = {
+        username: user.username,
+        profilePicture: user.profilePicture,
+        followers: user.followers,
+        following: user.following,
+        bio: user.bio,
+        numFollowing: user.numFollowing,
+        numFollowers: user.numFollowers,
+        privacy: user.privacy,
+        posts: "Private",
+        requested,
+      };
+      return res.status(StatusCodes.OK).json({ user: privateUser });
     }
   }
-  res.status(StatusCodes.OK).json({ user });
+  const currentUserFollowing = user.followers.includes(req.user.userId);
+  const userWithFollowingData = { ...user.toJSON(), currentUserFollowing };
+
+  res.status(StatusCodes.OK).json({ user: userWithFollowingData });
 };
 
 const getUserProfilePosts = async (req, res) => {
@@ -69,7 +85,8 @@ const getUserProfilePosts = async (req, res) => {
   }
   if (user.privacy === "private") {
     if (!user.followers.includes(req.user.userId)) {
-      throw new CustomError.UnauthorizedError("Follow User to see his profile");
+      const postsWithUserData = "Private";
+      return res.status(StatusCodes.OK).json({ postsWithUserData });
     }
   }
   const posts = await Post.find({ publisherId: user._id })
