@@ -104,6 +104,10 @@ body {
 /* profile section */
 .profile-section {
   grid-column: 2;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* display: none; */
 }
 .post-sticky-heading {
   border-bottom: 1px solid #4e4e4e;
@@ -143,20 +147,18 @@ body {
 }
 .profile-img {
   height: 15rem;
+  width: 15rem;
   border-radius: 50%;
   transform: translateY(-50%);
   margin-left: 2rem;
   cursor: pointer;
   object-fit: cover;
 }
-.edit-profile-btn {
+.profile-button {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background-color: rgb(21, 32, 43);
-  color: #f6f6f6;
   font-size: 1.5rem;
-  border: 1px solid #f6f6f6;
   padding: 0.7rem;
   border-radius: 12px;
   cursor: pointer;
@@ -164,11 +166,29 @@ body {
   font-weight: bold;
   display: none;
 }
+.edit-profile-btn {
+  background-color: rgb(21, 32, 43);
+  color: #f6f6f6;
+  border: 1px solid #f6f6f6;
+}
+/* .profile-action-btn {
+} */
+.profile-spinner {
+  position: absolute;
+  right: 11rem;
+  top: 2rem;
+  width: 2rem; /* Small size */
+  height: 2rem;
+  border: 3px solid transparent; /* Border thickness */
+  border-top-color: #3498db; /* Spinner color */
+  border-radius: 50%; /* Makes it circular */
+  animation: spin 1s linear infinite; /* Rotation animation */
+  opacity: 0;
+}
 
-.edit-profile-btn:hover {
-  background-color: #f6f6f6;
-  border: 1px solid rgb(21, 32, 43);
-  color: rgb(21, 32, 43);
+.edit-profile-btn:hover,
+.profile-action-btn:hover {
+  background-color: #c4c4c425;
 }
 .profile-stats {
   transform: translateY(-40%);
@@ -220,9 +240,8 @@ body {
 .post-container {
   list-style-type: none;
   border: 1px solid #4e4e4e;
-  height: 100%;
   border-top: none;
-
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -427,29 +446,32 @@ html {
   text-decoration: underline;
 }
 
-.unfollow-button {
-  /* margin-left: auto; */
+.unfollow-button,
+.follow-button,
+.requested-button {
   background-color: transparent;
-  border: 2px solid #780606;
   padding: 0.7rem;
   font-size: 1.5rem;
-  color: #780606;
   border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
-  width: 8rem;
+  width: 9rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.unfollow-button {
+  border: 2px solid #780606 !important;
+  color: #780606 !important;
 }
 .follow-button {
-  /* margin-left: auto; */
-  background-color: transparent;
-  border: 2px solid #f6f6f6;
-  padding: 0.7rem;
-  font-size: 1.5rem;
-  color: #f6f6f6;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  width: 8rem;
+  border: 2px solid #f6f6f6 !important;
+  color: #f6f6f6 !important;
+}
+.requested-button {
+  color: #f08c00 !important;
+  border: 2px solid #f08c00 !important;
 }
 
 .profile-container {
@@ -484,4 +506,151 @@ html {
   border-radius: 50%;
   margin-left: auto;
   opacity: 0;
+}
+.lock-icon {
+  color: #f6f6f6;
+  align-self: center;
+  font-size: 5rem;
+  margin-top: 10rem;
+}
+
+.post-spinner {
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+  border: 5px solid transparent;
+  border-top-color: #1a88cc;
+  border-right-color: #1a88cc;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  align-self: center;
+  margin-top: 5rem;
+}
+/* edit profile popup */
+.edit-profile-section {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50rem;
+  height: 60rem;
+  background-color: rgb(28, 40, 53);
+  border-radius: 0.8rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+.edit-profile-heading {
+  border-bottom: 1px solid #f6f6f6;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+.edit-profile-heading p {
+  margin-left: auto;
+  margin-right: auto;
+  color: #f6f6f6;
+  font-size: 1.7rem;
+  font-weight: 500;
+}
+.edit-back-icon {
+  color: #f6f6f6;
+  cursor: pointer;
+  font-size: 1.8rem;
+}
+/* Content Area */
+.edit-profile-content {
+  padding: 2rem;
+}
+
+/* Form Styling */
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Form Groups */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.form-group label {
+  font-size: 1.6rem;
+  color: #f6f6f6;
+}
+
+/* Input Fields */
+.input-file {
+  padding: 1rem;
+  font-size: 1.4rem;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.input-textarea {
+  padding: 1rem;
+  font-size: 1.4rem;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  resize: none;
+}
+
+/* Save Button */
+.save-btn {
+  padding: 1rem 2rem;
+  font-size: 1.6rem;
+  color: #fff;
+  background-color: #0066cc;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.save-btn:hover {
+  background-color: #004999;
+}
+
+.edit-spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 0.4rem solid rgba(255, 255, 255, 0.3); /* Light border */
+  border-top: 0.4rem solid #ffffff; /* Highlighted border */
+  border-radius: 50%; /* Makes it circular */
+  animation: spin 1s linear infinite; /* Spinning animation */
+  margin: auto; /* Center it inside its container */
+  opacity: 0;
+}
+
+@media (max-width: 600px) {
+  .edit-profile-section {
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+  .edit-profile-content {
+    padding: 1.5rem;
+  }
+
+  .form-group label {
+    font-size: 1.4rem;
+  }
+
+  .save-btn {
+    font-size: 1.4rem;
+  }
 }
