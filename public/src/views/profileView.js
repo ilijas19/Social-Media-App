@@ -10,7 +10,7 @@ class profileView extends View {
   _profileNavButtons = document.querySelectorAll(".profile-nav-item");
   _likedPostsNavBtn = document.querySelector(".liked-nav-item");
   _editProfileBtn = document.querySelector(".edit-profile-btn");
-  _followProfileBtn = document.querySelector(".follow-profile-btn");
+  _profileActionButton = document.querySelector(".profile-action-btn");
   _followingEl = document.querySelector(".following");
   _followersEl = document.querySelector(".followers");
   _mainSection = document.querySelector(".main");
@@ -20,19 +20,13 @@ class profileView extends View {
   _navItems = document.querySelectorAll(".nav-item");
   _followingNavItem = document.querySelector(".following-item");
   _followersNavItem = document.querySelector(".followers-item");
-
-  showOwnProfileButtons() {
-    this._likedPostsNavBtn.style.display = "flex";
-    this._editProfileBtn.style.display = "block";
-    this._followProfileBtn.style.display = "none";
-    this._addEditProfileBtnListener();
-  }
-  showSearchedProfileButtons() {
-    this._likedPostsNavBtn.style.display = "none";
-    this._editProfileBtn.style.display = "none";
-    this._followProfileBtn.style.display = "block";
-    this._addFollowBtnListener();
-  }
+  _profileSpinner = document.querySelector(".profile-spinner");
+  _editProfileSection = document.querySelector(".edit-profile-section");
+  _editBackIcon = document.querySelector(".edit-back-icon");
+  _editProfileForm = document.querySelector(".edit-profile-form");
+  _editInputFile = document.querySelector(".input-file");
+  _editInputBio = document.getElementById("bio");
+  _editSpinner = document.querySelector(".edit-spinner");
 
   //RENDERING USER INFO
   renderProfileInfo(user) {
@@ -43,20 +37,27 @@ class profileView extends View {
     this._numFollowing.textContent = user.numFollowing;
   }
 
-  //SEE FOLLOWERS AND FOLLOWING LISTS
-  addFollowListListeners() {}
+  showOwnProfileButtons() {
+    this._likedPostsNavBtn.style.display = "flex";
+    this._editProfileBtn.style.display = "block";
+    this._profileActionButton.style.display = "none";
+    this._addEditProfileBtnListener();
+    this._addEditBackListeners();
+  }
 
   //PROFILE NAVIGATION(OWN PROFILE ONLY)
   addProfileNavListeners(ownPostsHandler, likedPostsHandler, state) {
     this._profileNavButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const clicked = button.textContent.toLowerCase();
+      button.addEventListener("click", (e) => {
+        const clicked = button.textContent.toLowerCase().trim();
         if (clicked === "liked") {
           this._toggleSelectedClass(button);
           state.likedPage = 1;
           this.loadPage(likedPostsHandler);
+          console.log("ll");
         }
         if (clicked === "posts") {
+          console.log("aa");
           this._toggleSelectedClass(button);
           state.ownPostsPage = 1;
           this.loadPage(ownPostsHandler);
@@ -65,20 +66,94 @@ class profileView extends View {
     });
   }
 
+  // follow from user profile & to show if request is already sent
+  async showSearchedProfileButtons(getUserHandler, followUnfollowHandler) {
+    const url = new URLSearchParams(window.location.search);
+    const username = url.get("user");
+    const user = await getUserHandler(username);
+    console.log(user);
+    this._likedPostsNavBtn.style.display = "none";
+    this._editProfileBtn.style.display = "none";
+    this._profileActionButton.style.display = "block";
+    this._addFollowBtnListener(user, followUnfollowHandler, getUserHandler);
+    //-SHOWING CORRECT BUTTON ON PROFILE LOAD
+    if (user.posts === "Private") {
+      if (user.requested) {
+        this._profileActionButton.classList.add("requested-button");
+        this._profileActionButton.textContent = "Requested";
+      }
+    }
+    if (user.currentUserFollowing) {
+      this._profileActionButton.classList.add("unfollow-button");
+      this._profileActionButton.textContent = "Unfollow";
+    } else {
+      this._profileActionButton.classList.add("follow-button");
+      this._profileActionButton.textContent = "Follow";
+    }
+  }
+
   //FOLLOW USER FUNCTIONALITY
-  _addFollowBtnListener(handler) {
-    this._followProfileBtn.addEventListener("click", () => {
-      console.log("user followed");
+  _addFollowBtnListener(user, followUnfollowHandler, getUserHandler) {
+    this._profileActionButton.addEventListener("click", async (e) => {
+      //if user is private and not following switch between follow and requested
+      this._profileSpinner.style.opacity = 1;
+      e.target.disabled = true;
+      if (user.posts === "Private") {
+        this._switchReqButtons(e.target);
+        await followUnfollowHandler(user.username);
+        this._profileSpinner.style.opacity = 0;
+        return;
+      }
+      //if user is public switch between follow and unfollow btn
+      if (user.privacy === "public") {
+        this._switchFollButtons(e.target);
+        await followUnfollowHandler(user.username);
+        this._profileSpinner.style.opacity = 0;
+        this._updateFollCount(getUserHandler);
+        return;
+      }
     });
   }
-  //EDIT PROFILE FUNCTIONALITY
+  //--------EDIT PROFILE FUNCTIONALITY-------
   _addEditProfileBtnListener(handler) {
     this._editProfileBtn.addEventListener("click", () => {
-      console.log("profile edit");
+      this._togleEditSection();
     });
   }
 
-  //SEE FOLLOWERS FOLLOWING FUNCTIONALITY
+  _addEditBackListeners() {
+    this._editBackIcon.addEventListener("click", () => {
+      this._togleEditSection();
+    });
+  }
+
+  addEditFormListeners(pictureHandler, bioHandler) {
+    this._editProfileForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const file = this._editInputFile.files[0];
+      const bio = this._editInputBio.value;
+      if (!file && !bio) return;
+
+      this._editSpinner.style.opacity = 1;
+
+      const submitButton = this._editProfileForm.querySelector(
+        "button[type='submit']"
+      );
+      submitButton.disabled = true;
+      submitButton.textContent = "Saving...";
+      this._editProfileForm.style.pointerEvents = "none";
+
+      if (file) await pictureHandler(file);
+      if (bio) await bioHandler(bio);
+
+      if (bio || file) {
+        window.location.reload();
+      }
+    });
+  }
+
+  //---------SEE FOLLOWERS FOLLOWING FUNCTIONALITY-------
   addFollowingFollowersListeners(
     followingHandler,
     followersHandler,
@@ -111,11 +186,12 @@ class profileView extends View {
     this._addNavListeners(followingHandler, followersHandler);
   }
 
-  addProfileContainerListeners(handler) {
+  addProfileContainerListeners(follHandler) {
     this._profileContainer.addEventListener("click", async (e) => {
       if (
         e.target.classList.contains("follow-button") ||
-        e.target.classList.contains("unfollow-button")
+        e.target.classList.contains("unfollow-button") ||
+        e.target.classList.contains("requested-button")
       ) {
         // Disable  button  find  spinner
         e.target.disabled = true;
@@ -126,28 +202,55 @@ class profileView extends View {
         spinner.style.animation = "spin 1s linear infinite";
 
         //  follow/unfollow
-        await handler(e.target.dataset.id);
-
+        const result = await follHandler(e.target.dataset.id);
+        console.log(result);
+        if (result === "Request Sent" || result === "Request Removed") {
+          // Hide spinner  switch the button
+          spinner.style.opacity = "0";
+          spinner.style.animation = "none";
+          this._switchReqButtons(e.target);
+          return;
+        }
         // Hide spinner  switch the button
         spinner.style.opacity = "0";
         spinner.style.animation = "none";
-        this._switchButton(e.target);
+        this._switchFollButtons(e.target);
       }
     });
   }
 
   //-switching follow unfollow button
-  _switchButton(target) {
+  _switchFollButtons(target) {
     if (target.classList.contains("unfollow-button")) {
       target.disabled = false;
       target.classList.add("follow-button");
       target.classList.remove("unfollow-button");
       target.textContent = "Follow";
-    } else {
+      return;
+    }
+    if (target.classList.contains("follow-button")) {
       target.disabled = false;
       target.classList.add("unfollow-button");
       target.classList.remove("follow-button");
       target.textContent = "Unfollow";
+      return;
+    }
+  }
+
+  _switchReqButtons(target) {
+    if (target.classList.contains("requested-button")) {
+      target.disabled = false;
+      target.classList.add("follow-button");
+      target.classList.remove("requested-button");
+      target.textContent = "Follow";
+      return;
+    }
+    if (target.classList.contains("follow-button")) {
+      target.disabled = false;
+      target.classList.add("requested-button");
+      target.classList.remove("follow-button");
+      target.textContent = "Requested";
+      return;
     }
   }
 
@@ -186,6 +289,11 @@ class profileView extends View {
     this._followSection.classList.toggle("hidden");
   }
 
+  //toggling edit profile section
+  _togleEditSection() {
+    this._editProfileSection.classList.toggle("hidden");
+  }
+
   //-render profiles
   _renderProfiles(profiles) {
     this._clearProfileContainer();
@@ -195,14 +303,16 @@ class profileView extends View {
             <img src="${profile.profilePicture}" alt="" class="profile-pic" />
             <p class="profile-username">${profile.username}</p>
             <div class='mini-spinner'></div>
+         
             ${
               profile.me
                 ? ""
-                : profile.following === true
+                : profile.requested
+                ? ` <button class="requested-button" data-id=${profile.username}>Requested</button>`
+                : profile.following
                 ? `<button class="unfollow-button" data-id=${profile.username}>Unfollow</button>`
                 : ` <button class="follow-button" data-id=${profile.username}>Follow</button>`
             }
-            
             
           </li>`;
 

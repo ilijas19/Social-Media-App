@@ -16,10 +16,17 @@ export default class View {
   setViewCurrentUser(currentUser) {
     this._currentUser = currentUser;
   }
+  _renderSpinner() {
+    this._postsContainer.insertAdjacentHTML(
+      "beforeend",
+      `<div class="post-spinner"></div>`
+    );
+  }
 
   async loadPage(handler) {
     try {
       this._clearContainer();
+      this._renderSpinner();
       window.scrollTo({ top: 0, behavior: "smooth" });
       const posts = await handler();
       //passing handler to render posts
@@ -31,8 +38,17 @@ export default class View {
 
   //--RENDERING POSTS--\\
   _renderPosts(posts, handler) {
+    this._clearContainer();
+
     //handler passed from load page()
     //rendering fetched posts
+    if (posts === "Private") {
+      this._postsContainer.insertAdjacentHTML(
+        "beforeend",
+        `<i class="fa-solid fa-lock lock-icon"></i>`
+      );
+      return;
+    }
     posts.forEach((post) => {
       const isOwnPost = this._currentUser.posts.includes(post._id);
       const postEl = `
@@ -42,15 +58,15 @@ export default class View {
               class="publisher-profile-photo"
               alt=''
             />
-            <p class="publisher-name">
-              ${post.publisherUsername} &middot; <span>${this._formatDate(
-        post.createdAt
-      )}</span>${
+            <div class="publisher-name">
+              <p class='publisher-username'>${
+                post.publisherUsername
+              }</p> &middot; <span>${this._formatDate(post.createdAt)}</span>${
         isOwnPost
           ? `<i class="fa-solid fa-trash del-post-icon cRed" data-id=${post._id}></i>`
           : ""
       } 
-            </p>
+            </div>
                <p class="post-text">
              ${post.text}
             </p>
@@ -139,6 +155,10 @@ export default class View {
           await this._handlePostDeletion(target.dataset.id, model.deletePost);
         }
       }
+
+      if (target.classList.contains("publisher-username")) {
+        window.location = `/profile?user=${target.textContent}`;
+      }
     });
   }
 
@@ -196,10 +216,9 @@ export default class View {
   }
 
   _toggleSelectedPostPage() {
-    // Check if _mainSection is hidden
+    //TODO CLOSE EDIT PROFILE SCTION TOO !
     const isMainSectionHidden = this._mainSection.classList.contains("hidden");
 
-    // Toggle classes based on the current state
     if (isMainSectionHidden) {
       this._mainSection.classList.remove("hidden");
       this._selectedPostSection.classList.add("hidden");
@@ -288,6 +307,8 @@ export default class View {
 
     this._commentForm.addEventListener("submit", this._commentSubmitFunction);
   }
+
+  //---------EDIT PROFILE PAGE---------\\
 
   //---HELPRERS---\\
 

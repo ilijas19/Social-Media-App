@@ -77,14 +77,23 @@ const profilePageController = async () => {
         profileView.loadPage(async () => {
           return await model.getUserProfilePosts(user.username);
         });
-        profileView.showSearchedProfileButtons();
+        //here
+        profileView.showSearchedProfileButtons(
+          model.getUserProfile,
+          model.followUnfollowUser
+        );
+        //
         profileView.addPostInteractionListeners(model);
         profileView.addFollowingFollowersListeners(
           model.getUserFollowing,
           model.getUserFollowers,
           model.getUserProfile
         );
-        profileView.addProfileContainerListeners(model.followUnfollowUser);
+        profileView.addProfileContainerListeners(
+          model.followUnfollowUser,
+          //
+          model.getUserProfile
+        );
         return;
       } else {
         //if user from url doesent exists
@@ -107,7 +116,15 @@ const profilePageController = async () => {
       model.getUserFollowers,
       model.getUserProfile
     );
-    profileView.addProfileContainerListeners(model.followUnfollowUser);
+    profileView.addProfileContainerListeners(
+      model.followUnfollowUser,
+      //
+      model.getUserProfile
+    );
+    profileView.addEditFormListeners(
+      model.updateProfilePicture,
+      model.updateBio
+    );
   }
 };
 

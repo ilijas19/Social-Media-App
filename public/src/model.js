@@ -194,7 +194,9 @@ export const getUserProfile = async (username) => {
   try {
     const result = await axios.get(`/api/v1/profile/${username}`);
     return result.data.user;
-  } catch (error) {}
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
 };
 
 export const getUserProfilePosts = async (username) => {
@@ -213,7 +215,7 @@ export const getUserProfilePosts = async (username) => {
 export const getUserFollowing = async (username) => {
   try {
     const result = await axios.get(`/api/v1/user/following/${username}`);
-    console.log(result.data.following);
+    // console.log(result.data.following);
     return result.data.following;
   } catch (error) {
     alert(error.response.data.msg);
@@ -223,7 +225,7 @@ export const getUserFollowing = async (username) => {
 export const getUserFollowers = async (username) => {
   try {
     const result = await axios.get(`/api/v1/user/followers/${username}`);
-    console.log(result.data.followers);
+    // console.log(result.data.followers);
     return result.data.followers;
   } catch (error) {
     alert(error.response.data.msg);
@@ -233,8 +235,34 @@ export const getUserFollowers = async (username) => {
 export const followUnfollowUser = async (username) => {
   try {
     const response = await axios.get(`/api/v1/user/followUnfollow/${username}`);
-    console.log(response.data.msg);
+    return response.data.msg;
   } catch (error) {
     alert(error.response.data.msg);
+  }
+};
+
+export const updateBio = async (bio) => {
+  try {
+    const response = await axios.patch("/api/v1/profile/bio", { bio });
+    console.log(response.data);
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const updateProfilePicture = async (imageFile) => {
+  try {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    const response = await axios.patch(
+      "/api/v1/profile/profilePhoto",
+      formData
+    );
+    console.log(response.data);
+  } catch (error) {
+    alert(
+      error.response.data.msg ||
+        "An Error occured while updating the profile picture"
+    );
   }
 };
