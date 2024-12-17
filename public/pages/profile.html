@@ -50,7 +50,6 @@
             <i class="fa-regular fa-user menu-icon"></i>
             <p class="menu-item-text">Profile</p>
           </li>
-          <button class="menu-post-btn">Post</button>
         </ul>
       </aside>
       <section class="profile-section main">
@@ -67,18 +66,13 @@
               class="profile-img"
             />
             <div class="profile-stats">
-              <h3 class="profile-name">Ilijas</h3>
-              <h6 class="bio">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil
-                totam modi reprehenderit aut quidem laboriosam! Vitae amet vel
-                officia porro velit omnis aperiam nam, nesciunt ab qui
-                excepturi, maiores recusandae?
-              </h6>
+              <h3 class="profile-name"></h3>
+              <h6 class="bio"></h6>
               <p class="following">
-                <span class="numFollowing">21</span> following
+                <span class="numFollowing"></span> following
               </p>
               <p class="followers">
-                <span class="numFollowers">22</span> followers
+                <span class="numFollowers"></span> followers
               </p>
             </div>
             <ul class="profile-nav">
@@ -87,12 +81,15 @@
               </li>
               <li class="profile-nav-item liked-nav-item">Liked</li>
             </ul>
-            <button class="edit-profile-btn">Edit profile</button>
-            <button class="edit-profile-btn follow-profile-btn">Follow</button>
+            <button class="profile-button edit-profile-btn">
+              Edit profile
+            </button>
+            <button class="profile-button profile-action-btn">Follow</button>
+            <div class="profile-spinner"></div>
           </div>
         </section>
         <ul class="post-container">
-          <li class="post">
+          <!-- <li class="post">
             <img
               src="../img/blank-profile-picture-973460_1280.webp"
               class="publisher-profile-photo"
@@ -115,7 +112,7 @@
               </div>
               <i class="fa-regular fa-bookmark icon save-icon"></i>
             </div>
-          </li>
+          </li> -->
         </ul>
       </section>
 
@@ -181,6 +178,42 @@
             <button class="unfollow-button">Unfollow</button>
           </li>
         </ul>
+      </section>
+      <section class="edit-profile-section hidden">
+        <div class="edit-profile-heading">
+          <i class="fa-solid fa-arrow-left edit-back-icon"></i>
+          <p>Edit Profile</p>
+        </div>
+        <div class="edit-profile-content">
+          <form class="edit-profile-form">
+            <!-- Update Profile Picture -->
+            <div class="form-group">
+              <label for="profile-picture">Profile Picture</label>
+              <input
+                type="file"
+                id="profile-picture"
+                class="input-file"
+                accept="image/*"
+              />
+            </div>
+
+            <!-- Update Bio -->
+            <div class="form-group">
+              <label for="bio">Bio</label>
+              <textarea
+                id="bio"
+                class="input-textarea"
+                rows="5"
+                placeholder="Write something about yourself..."
+              ></textarea>
+            </div>
+
+            <!-- Save Button -->
+            <button type="submit" class="save-btn">Save Changes</button>
+
+            <div class="edit-spinner"></div>
+          </form>
+        </div>
       </section>
     </div>
     <script
