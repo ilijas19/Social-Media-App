@@ -1,0 +1,66 @@
+.hamburger-icon {
+  display: none;
+}
+.close-menu-icon {
+  display: none;
+}
+@media (max-width: 750px) {
+  .hamburger-icon {
+    display: block;
+    color: #f6f6f6;
+    font-size: 2.2rem;
+    align-self: center;
+    padding: 0 1rem;
+    cursor: pointer;
+    justify-self: flex-end;
+  }
+  .close-menu-icon {
+    display: block;
+    position: absolute;
+    color: #f6f6f6;
+    font-size: 2.2rem;
+    right: 2rem;
+    top: 2rem;
+    cursor: pointer;
+  }
+  .menu-profile-div {
+    width: fit-content;
+  }
+  body {
+    position: relative;
+  }
+  .container {
+    max-width: 650px;
+    grid-template-columns: 1fr;
+  }
+  .menu-section {
+    position: absolute;
+    z-index: 9999999;
+    background-color: #202b35;
+
+    width: 45%;
+    left: 0;
+    left: -40rem;
+    transition: all 0.5s;
+  }
+
+  .main-section,
+  .chat-section,
+  .search-section,
+  .bookmark-section,
+  .profile-section,
+  .selected-post-section,
+  .follow-section {
+    grid-column: 1;
+  }
+}
+@media (max-width: 550px) {
+  .menu-section {
+    width: 80%;
+  }
+}
+@media (max-width: 350px) {
+  .menu-section {
+    width: 100%;
+  }
+}

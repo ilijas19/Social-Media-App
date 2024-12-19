@@ -12,18 +12,30 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="../styles/messageStyles.css" />
+    <link rel="stylesheet" href="../styles/querries.css" />
   </head>
   <body>
+    <section class="start-chat-popup hidden">
+      <i class="fa-solid fa-xmark close-popup-icon"></i>
+      <h3 class="start-chat-h3">Send Message</h3>
+      <form class="search-form">
+        <input class="search-input" type="text" placeholder="Search For User" />
+        <button type="submit" class="search-button">Search</button>
+      </form>
+      <ul class="users-container"></ul>
+    </section>
+
     <div class="container">
       <aside class="menu-section">
         <ul class="menu">
+          <i class="fa-solid fa-xmark close-menu-icon"></i>
           <div class="menu-profile-div">
             <img
               src="../img/blank-profile-picture-973460_1280.webp"
               alt=""
               class="menu-profile-img"
             />
-            <p class="menu-profile-username">Ilijas19</p>
+            <p class="menu-profile-username"></p>
           </div>
           <li class="menu-item">
             <i class="fa-solid fa-house menu-icon"></i>
@@ -54,10 +66,15 @@
       <div class="chat-section">
         <div class="post-sticky-heading">
           <i class="fa-solid fa-arrow-left page-back-icon"></i>
-          <p class="chat-title">Ilijas19 or Messages</p>
+          <i class="fa-solid fa-arrow-left msg-back-icon hidden"></i>
+          <p class="chat-title">Messages</p>
+          <div class="icon-div">
+            <i class="fa-solid fa-plus start-chat-icon"></i>
+            <i class="fa-solid fa-bars hamburger-icon"></i>
+          </div>
         </div>
         <ul class="chats-continer">
-          <li class="chat">
+          <!-- <li class="chat">
             <img
               src="../img/blank-profile-picture-973460_1280.webp"
               alt=""
@@ -68,7 +85,7 @@
               <p class="new-msg">NEW MESSAGE</p>
             </div>
             <i class="fa-solid fa-ellipsis chat-icon"></i>
-          </li>
+          </li> -->
         </ul>
 
         <ul class="private-chat hidden">
@@ -99,6 +116,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script type="module" src="../src/controller.js"></script>
   </body>
 </html>

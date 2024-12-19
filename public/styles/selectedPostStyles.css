@@ -16,7 +16,7 @@
   z-index: 999;
   background-color: rgba(21, 32, 43, 0.877);
 }
-.selected-post-header i {
+.selected-post-header {
   color: #f6f6f6;
   font-size: 2.4rem;
   cursor: pointer;
@@ -26,6 +26,7 @@
   color: #f6f6f6;
   font-size: 2rem;
   margin-right: auto;
+  margin-left: auto;
 }
 
 .selected-post-interaction {
