@@ -6,6 +6,7 @@ import homeView from "./views/homeView.js";
 import savedView from "./views/savedView.js";
 import profileView from "./views/profileView.js";
 import searchView from "./views/searchView.js";
+import messageView from "./views/messagesView.js";
 
 const authController = () => {
   if (
@@ -135,6 +136,38 @@ const searchPageController = () => {
   }
 };
 
+const messagesPageController = async () => {
+  if (window.location.pathname === "/messages") {
+    //SOCKET IO
+    const socket = io();
+    socket.on("join", (data) => {
+      model.state.currentUser.socketId = data.id;
+
+      socket.emit("joinFromClient", {
+        currentUser: model.state.currentUser,
+      });
+    });
+
+    socket.on("messageFromServer", (message) => {
+      messageView._renderMessage(message);
+    });
+    //page
+    await messageView.renderChats(model.getAllChats);
+    messageView.addNewChatBtnListeners(model.searchForUser);
+    messageView.addStartChatListeners(
+      model.createChat,
+      model.getChatMessages,
+      socket
+    );
+    messageView.addChatListeners(model.getChatMessages, socket);
+    messageView.addMessageFormListeners(
+      socket,
+      model.createMessage,
+      model.state.currentUser.username
+    );
+  }
+};
+
 const init = async () => {
   authController();
   await menuController();
@@ -142,6 +175,7 @@ const init = async () => {
   savedPageController();
   profilePageController();
   searchPageController();
+  messagesPageController();
 };
 
 init();

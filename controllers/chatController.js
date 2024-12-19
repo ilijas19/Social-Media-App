@@ -18,15 +18,12 @@ const createChat = async (req, res) => {
       `User with id: ${userId} was not found`
     );
   }
-  const isFollowed = user.followers.includes(req.user.userId);
-  if (!isFollowed) {
-    throw new CustomError.BadRequestError(
-      "You must follow user in order to start chat with him"
-    );
-  }
 
   const existingChat = await Chat.findOne({
     users: { $all: [userId, req.user.userId] },
+  }).populate({
+    path: "users",
+    select: "username profilePicture",
   });
 
   if (existingChat) {
@@ -34,8 +31,19 @@ const createChat = async (req, res) => {
       .status(StatusCodes.OK)
       .json({ msg: "Existing Chat", existingChat });
   }
-  const chat = await Chat.create({ users: [req.user.userId, user._id] });
-  res.status(StatusCodes.CREATED).json({ chat });
+
+  const chat = await Chat.create({
+    users: [req.user.userId, user._id],
+  });
+
+  await chat.save();
+
+  const popultedChat = await chat.populate({
+    path: "users",
+    select: "username profilePicture",
+  });
+
+  res.status(StatusCodes.CREATED).json({ chat: popultedChat });
 };
 
 const getAllChats = async (req, res) => {
@@ -43,9 +51,19 @@ const getAllChats = async (req, res) => {
     users: { $all: [req.user.userId] },
   }).populate({
     path: "users",
-    select: "username",
+    select: "username profilePicture",
   });
-  res.status(StatusCodes.OK).json({ chats });
+  if (chats.length === 0) {
+    res.status(StatusCodes.OK).json({ chatsWithData: [] });
+    return;
+  }
+  const chatsWithData = chats.map((chat) => {
+    const otherUser = chat.users.filter(
+      (user) => user._id.toString() !== req.user.userId
+    );
+    return { ...chat.toJSON(), otherUser };
+  });
+  res.status(StatusCodes.OK).json({ chatsWithData });
 };
 
 const sendMessage = async (req, res) => {
@@ -82,7 +100,7 @@ const getChatMessages = async (req, res) => {
   }
   const chat = await Chat.findOne({ _id: chatId }).populate({
     path: "messages",
-    select: "text status senderId",
+    select: "text status senderId createdAt",
     populate: {
       path: "senderId",
       select: "username",

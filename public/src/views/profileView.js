@@ -81,14 +81,17 @@ class profileView extends View {
       if (user.requested) {
         this._profileActionButton.classList.add("requested-button");
         this._profileActionButton.textContent = "Requested";
+        return;
       }
     }
     if (user.currentUserFollowing) {
       this._profileActionButton.classList.add("unfollow-button");
       this._profileActionButton.textContent = "Unfollow";
+      return;
     } else {
       this._profileActionButton.classList.add("follow-button");
       this._profileActionButton.textContent = "Follow";
+      return;
     }
   }
 

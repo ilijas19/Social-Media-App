@@ -266,3 +266,40 @@ export const updateProfilePicture = async (imageFile) => {
     );
   }
 };
+
+export const createChat = async (userId) => {
+  try {
+    const response = await axios.post("/api/v1/chat", { userId });
+
+    return response.data;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const getAllChats = async () => {
+  try {
+    const response = await axios.get("/api/v1/chat");
+    return response.data;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const getChatMessages = async (chatId) => {
+  try {
+    const response = await axios.get(`/api/v1/chat/${chatId}`);
+    return response.data;
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};
+
+export const createMessage = async (chatId, text) => {
+  try {
+    const response = await axios.post(`/api/v1/chat/${chatId}`, { text });
+    console.log(response.data);
+  } catch (error) {
+    alert(error.response.data.msg);
+  }
+};

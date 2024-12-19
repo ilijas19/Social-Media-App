@@ -8,7 +8,7 @@ const socketIO = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 //packages
-const socket = socketIO(server);
+const io = socketIO(server);
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
 const cloudinary = require("cloudinary").v2;
@@ -53,8 +53,43 @@ app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
+
+const {
+  userJoin,
+  userLeave,
+  getOnlineUsers,
+  joinRoom,
+  leaveRoom,
+} = require("./utils/socketUsers");
 const start = async () => {
   try {
+    io.on("connection", (socket) => {
+      socket.emit("join", { id: socket.id });
+
+      socket.on("joinFromClient", (data) => {
+        userJoin(data.currentUser);
+      });
+
+      socket.on("joinRoom", (data) => {
+        joinRoom(socket, data.chatId);
+        console.log(data, "joinRoom");
+      });
+
+      socket.on("messageFromClient", (data) => {
+        const { message, room } = data;
+        io.to(room).emit("messageFromServer", message);
+      });
+
+      socket.on("leaveRoom", () => {
+        leaveRoom(socket);
+        console.log(socket.id, "leave room");
+      });
+
+      socket.on("disconnect", () => {
+        userLeave(socket.id);
+      });
+    });
+
     await connectDb(process.env.MONGO_URI);
     server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
