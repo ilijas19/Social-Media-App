@@ -29,6 +29,9 @@ export default class View {
       this._renderSpinner();
       window.scrollTo({ top: 0, behavior: "smooth" });
       const posts = await handler();
+      console.log(posts);
+      this._clearContainer();
+
       //passing handler to render posts
       this._renderPosts(posts, handler);
     } catch (error) {
@@ -38,8 +41,6 @@ export default class View {
 
   //--RENDERING POSTS--\\
   _renderPosts(posts, handler) {
-    this._clearContainer();
-
     //handler passed from load page()
     //rendering fetched posts
     if (posts === "Private") {
@@ -299,7 +300,7 @@ export default class View {
       const text = this._commentInput.value;
       await commentHandler(postId, text);
       const post = await getPostHandler(postId);
-      this._renderComments(post.comments);
+      this._renderComments(post.comments, post);
       this._commentInput.value = "";
       const commentCountEl = target.nextElementSibling;
       commentCountEl.textContent = Number(commentCountEl.textContent) + 1;
